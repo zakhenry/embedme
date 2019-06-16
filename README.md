@@ -82,6 +82,10 @@ example doesn't even work?!
 
 Feel free to raise a PR for any of these items!
 
+- Tests for this repo to verify behavior & guard against regression
 - Glob syntax support for embedding into multiple files at once
 - Nicer console output (colours etc)
 - Proper documentation in cli, i.e. `embedme --help` should give a nice info page
+- Helper methods to verify no changes to readme in CI (this will be helpful to prevent people who don't know the code source
+  is outside the readme)
+- Blog post!
