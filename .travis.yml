@@ -16,7 +16,6 @@ script:
   - yarn build
   # tests
   - yarn test
-  - cp LICENSE README.md dist
 
 deploy:
   - provider: script

@@ -2,7 +2,6 @@
   "name": "embedme",
   "version": "0.0.0-development",
   "description": "Utility for embedding code snippets into markdown documents",
-  "main": "dist/embedme.lib.js",
   "repository": "https://github.com/zakhenry/embedme",
   "author": "Zak Henry",
   "license": "MIT",
