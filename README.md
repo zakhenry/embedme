@@ -2,6 +2,10 @@
 
 Simple utility to embed source files into markdown code blocks <sup>[why tho?](#why)</sup>
 
+[![npm version](https://badge.fury.io/js/embedme.svg)](https://www.npmjs.com/package/embedme)
+[![Build Status](https://travis-ci.org/zakhenry/embedme.svg?branch=master)](https://travis-ci.org/zakhenry/embedme)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](https://commitizen.github.io/cz-cli/)
+
 ## Quickstart
 
 With a `README.md` in you current working directory, add a code block for one of the
