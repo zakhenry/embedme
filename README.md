@@ -47,16 +47,35 @@ in future
 
 ### Supported File Types (so far!)
 
-Here's a list of file types supported by this utility, it is sure to grow as I need it but if you have a need for
-another language please feel free to contribute, it is easy!
+Here's a list of file types supported by this utility, if you have a need for another language please feel free to
+contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L34-L38
+// src/embedme.lib.ts#L34-L57
 
 enum SupportedFileType {
   TYPESCRIPT = 'ts',
+  JAVASCRIPT = 'js',
+  SCSS = 'scss',
+  RUST = 'rs',
+  JAVA = 'java',
+  CPP = 'cpp',
+  C = 'c',
   HTML = 'html',
+  XML = 'xml',
   MARKDOWN = 'md',
+  YAML = 'yaml',
+  PYTHON = 'py',
+  BASH = 'bash',
+  SHELL = 'sh',
+  GOLANG = 'go',
+  OBJECTIVE_C = 'objectivec',
+  PHP = 'php',
+  C_SHARP = 'cs',
+  SWIFT = 'swift',
+  RUBY = 'rb',
+  KOTLIN = 'kotlin',
+  SCALA = 'scala',
 }
 ```
 
