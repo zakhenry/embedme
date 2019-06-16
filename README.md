@@ -86,6 +86,9 @@ Feel free to raise a PR for any of these items!
 - Glob syntax support for embedding into multiple files at once
 - Nicer console output (colours etc)
 - Proper documentation in cli, i.e. `embedme --help` should give a nice info page
-- Helper methods to verify no changes to readme in CI (this will be helpful to prevent people who don't know the code source
-  is outside the readme)
+- Helper methods to
+  - `--verify-no-changes` to readme in CI (this will be helpful to prevent people who don't know the code source
+    is outside the readme)
+  - do a `--dry-run` and output to stdout so devs can preview without read of overwriting
+- Refactor supported language feature into language families so many C-like languages, or python & bash etc are easily supported
 - Blog post!
