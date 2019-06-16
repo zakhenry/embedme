@@ -1,0 +1,38 @@
+{
+  "name": "embedme",
+  "version": "0.0.0-development",
+  "description": "Utility for embedding code snippets into markdown documents",
+  "main": "dist/embedme.lib.js",
+  "repository": "https://github.com/zakhenry/embedme",
+  "author": "Zak Henry",
+  "license": "MIT",
+  "private": false,
+  "bin": "./dist/embedme.bin.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/embedme.bin.js README.md",
+    "test": "echo @todo",
+    "commit": "git add . && git-cz",
+    "------------------ LINT COMMANDS -----------------": "",
+    "prettier": "prettier",
+    "prettier:base": "yarn run prettier \"**/*.{js,json,scss,md,ts,html}\"",
+    "prettier:write": "yarn run prettier:base --write",
+    "prettier:check": "yarn run prettier:base --list-different",
+    "------------------ RELEASE COMMANDS ------------------": "",
+    "semantic-release": "semantic-release",
+    "readme:build": "yarn start",
+    "readme:check": "yarn readme:build && ! git status | grep README.md || (echo 'You must commit build and commit changes to README.md!' && exit 1)"
+  },
+  "devDependencies": {
+    "@types/node": "12.0.8",
+    "cz-conventional-changelog": "2.1.0",
+    "prettier": "1.18.2",
+    "semantic-release": "15.13.16",
+    "typescript": "3.5.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
