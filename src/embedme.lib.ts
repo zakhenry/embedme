@@ -34,6 +34,7 @@ type FilenameFromCommentReader = (line: string) => string | null;
 enum SupportedFileType {
   TYPESCRIPT = 'ts',
   HTML = 'html',
+  MARKDOWN = 'md',
 }
 
 const filetypeCommentReaders: Record<SupportedFileType, FilenameFromCommentReader> = {
@@ -53,6 +54,7 @@ const filetypeCommentReaders: Record<SupportedFileType, FilenameFromCommentReade
 
     return match[1];
   },
+  [SupportedFileType.MARKDOWN]: line => filetypeCommentReaders.html(line),
 };
 
 /**
@@ -95,7 +97,9 @@ export function embedme(sourceText: string, inputFilePath: string): string {
 
       const [, filename, , lineNumbering, startLine, endLine] = matches;
       if (filename.includes('#')) {
-        console.warn(`Incorrectly formatted line numbering string ${filename}, Expecting Github formatting e.g. #L10-L20`);
+        console.warn(
+          `Incorrectly formatted line numbering string ${filename}, Expecting Github formatting e.g. #L10-L20`,
+        );
         return substr;
       }
 
@@ -132,11 +136,13 @@ export function embedme(sourceText: string, inputFilePath: string): string {
 
       const outputCode = lines.join('\n');
 
+      console.info(`Embedded code snippet from file ${filename}`);
+
       return `\`\`\`${extension}
 ${firstLine}
 
 ${outputCode}
-  \`\`\``;
+\`\`\``;
     },
   );
 }
