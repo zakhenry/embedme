@@ -37,9 +37,9 @@ Et voilà! Your README.md file will be updated with the content of your source f
 
 As the comment is preserved, you can happily re-run `embedme` and it will run again but there will be no changes.
 
-### Features
+## Features
 
-## Multi Language
+### Multi Language
 
 `embedme` simply uses the file type hint in a code fence to choose a strategy for finding the commented filename in the
 first line of the code block. This is a relatively trivial regular expression, so many more languages can be supported
@@ -78,7 +78,7 @@ For starters if you're using a typesafe language (e.g. Typescript) you will get 
 really should be writing unit tests on your example code. As simple as it might be, how embarrassing is it if your
 example doesn't even work?!
 
-### Future features
+## Future features
 
 Feel free to raise a PR for any of these items!
 
