@@ -6,7 +6,7 @@ Simple utility to embed source files into markdown code blocks <sup>[why tho?](#
 [![Build Status](https://travis-ci.org/zakhenry/embedme.svg?branch=master)](https://travis-ci.org/zakhenry/embedme)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](https://commitizen.github.io/cz-cli/)
 
-## Quickstart
+## Usage
 
 With a `README.md` in you current working directory, add a code block for one of the
 [supported file types](#supported-file-types-so-far) and start the code block simply with a comment with the path to a
@@ -39,11 +39,39 @@ As the comment is preserved, you can happily re-run `embedme` and it will run ag
 
 ## Features
 
+```
+$ embedme --help
+Usage: embedme [options]
+
+Options:
+  -V, --version              output the version number
+  --verify                   Verify that running embedme would result in no changes. Useful for CI
+  --dry-run                  Run embedme as usual, but don't write
+  --source-root [directory]  Directory your source files live in in order to shorten the comment line in code fence
+  --silent                   No console output
+  -h, --help                 output usage information
+
+```
+
 ### Multi Language
 
 `embedme` simply uses the file type hint in a code fence to choose a strategy for finding the commented filename in the
 first line of the code block. This is a relatively trivial regular expression, so many more languages can be supported
 in future
+
+### Glob matching
+
+If you want to run `embedme` over multiple files, you can use glob matching, i.e.
+
+```bash
+embedme src/**/*.md
+```
+
+### CI Checks
+
+If you're using continuous integration, you can pass the flag `--verify` to `embedme` to check that there are no changes
+expected to your files. This is useful for repositories with multiple contributors who may not know about `embedme`, and
+also for yourself as a sanity check that you remembered to run it after updating sample code!
 
 ### Supported File Types (so far!)
 
@@ -51,7 +79,7 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L34-L57
+// src/embedme.lib.ts#L42-L65
 
 enum SupportedFileType {
   TYPESCRIPT = 'ts',
@@ -96,17 +124,3 @@ breaking change, having your example code _actually using your library_ guarante
 For starters if you're using a typesafe language (e.g. Typescript) you will get compiler errors, and secondarily you
 really should be writing unit tests on your example code. As simple as it might be, how embarrassing is it if your
 example doesn't even work?!
-
-## Future features
-
-Feel free to raise a PR for any of these items!
-
-- Tests for this repo to verify behavior & guard against regression
-- Glob syntax support for embedding into multiple files at once
-- Nicer console output (colours etc)
-- Proper documentation in cli, i.e. `embedme --help` should give a nice info page
-- Helper methods to
-  - `--verify-no-changes` to readme in CI (this will be helpful to prevent people who don't know the code source
-    is outside the readme)
-  - do a `--dry-run` and output to stdout so devs can preview without read of overwriting
-- Blog post!

@@ -1,3 +1,5 @@
+# File types
+
 ```md
 <!-- sample.md -->
 
@@ -254,4 +256,59 @@ object HelloWorld {
   }
 }
 
+```
+
+## Line selection
+
+```cs
+// sample.cs#L6-L13
+
+static void Main()
+{
+    Console.WriteLine("Hello World!");
+
+    // Keep the console window open in debug mode.
+    Console.WriteLine("Press any key to exit.");
+    Console.ReadKey();
+}
+```
+
+## Errors
+
+```binary
+01001000 01100101 01101100 01101100 01101111 00100000 01010111 01101111 01110010 01101100 01100100
+```
+
+```
+Ignored block
+```
+
+```ts
+// Not a file
+```
+
+```ts
+// also-not-a-file
+```
+
+### Contains Codefence
+
+```md
+<!-- contains-codefence.md -->
+```
+
+### Contains Codefence, but not the embedded lines
+
+```md
+<!-- contains-codefence.md#L1-L3 -->
+
+# This markdown document
+
+## Contains a codefence
+```
+
+### malformed line numbering
+
+```ts
+// sample.ts#L1-2
 ```
