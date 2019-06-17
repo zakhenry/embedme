@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
+import chalk from 'chalk';
 
 /**
  * This simple script looks for code fences in source file for a syntax that looks like a file reference, optionally
@@ -30,6 +31,13 @@ import { resolve } from 'path';
  */
 
 type FilenameFromCommentReader = (line: string) => string | null;
+
+export interface EmbedmeOptions {
+  sourceRoot: string;
+  dryRun: boolean;
+  verify: boolean;
+  silent: boolean;
+}
 
 enum SupportedFileType {
   TYPESCRIPT = 'ts',
@@ -122,12 +130,22 @@ function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily
     .find((commentFamily: CommentFamily) => languageMap[commentFamily].includes(fileType));
 }
 
+export const logBuilder = (options: EmbedmeOptions) => (...messages: string[]) => {
+  if (!options.silent) {
+    console.log(...messages);
+  }
+};
+
 /**
  * Match a codefence, capture groups around the file extension (optional) and first line starting with // (optional)
  */
 const codeFenceMatcher: RegExp = /```([\S]*)$\n([\s\S]*?$)?([\s\S]*?)\n?```/gm;
 
-export function embedme(sourceText: string, inputFilePath: string): string {
+export function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): string {
+  const log = logBuilder(options);
+
+  log(chalk.magenta(`  Analysing ${chalk.underline(inputFilePath)}...`));
+
   return sourceText.replace(
     codeFenceMatcher,
     (substr: string, codeExtension: SupportedFileType, firstLine?: string) => {
@@ -140,10 +158,12 @@ export function embedme(sourceText: string, inputFilePath: string): string {
       );
 
       if (supportedFileTypes.indexOf(codeExtension) < 0) {
-        console.warn(
-          `Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
-            ', ',
-          )}, skipping code block`,
+        log(
+          chalk.yellow(
+            `    Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
+              ', ',
+            )}, skipping code block`,
+          ),
         );
         return substr;
       }
@@ -151,8 +171,12 @@ export function embedme(sourceText: string, inputFilePath: string): string {
       const languageFamily: CommentFamily | null = lookupLanguageCommentFamily(codeExtension);
 
       if (languageFamily == null) {
-        console.error(
-          `File extension ${codeExtension} marked as supported, but comment family could not be determined. Please report this issue.`,
+        log(
+          chalk.red(
+            `    File extension ${chalk.underline(
+              codeExtension,
+            )} marked as supported, but comment family could not be determined. Please report this issue.`,
+          ),
         );
         return substr;
       }
@@ -160,28 +184,41 @@ export function embedme(sourceText: string, inputFilePath: string): string {
       const commentedFilename = filetypeCommentReaders[languageFamily](firstLine);
 
       if (!commentedFilename) {
-        console.info(`No comment detected in first line for block with extension ${codeExtension}`);
+        log(chalk.gray(`    No comment detected in first line for block with extension ${codeExtension}`));
         return substr;
       }
 
-      const matches = commentedFilename.match(/\s?(\S+?)((#L(\d+)-L(\d+))|$)/m);
+      const matches = commentedFilename.match(/\s?(\S+?\.\S+?)((#L(\d+)-L(\d+))|$)/m);
 
       if (!matches) {
+        log(chalk.gray(`    No file found in first comment block`));
         return substr;
       }
 
       const [, filename, , lineNumbering, startLine, endLine] = matches;
       if (filename.includes('#')) {
-        console.warn(
-          `Incorrectly formatted line numbering string ${filename}, Expecting Github formatting e.g. #L10-L20`,
+        log(
+          chalk.red(
+            `    Incorrectly formatted line numbering string ${chalk.underline(
+              filename,
+            )}, Expecting Github formatting e.g. #L10-L20`,
+          ),
         );
         return substr;
       }
 
-      const relativePath = resolve(inputFilePath, '..', filename);
+      const relativePath = options.sourceRoot
+        ? resolve(process.cwd(), options.sourceRoot, filename)
+        : resolve(inputFilePath, '..', filename);
 
       if (!existsSync(relativePath)) {
-        console.warn(`Found filename ${filename} in comment in first line, but file does not exist at that location!`);
+        log(
+          chalk.red(
+            `    Found filename ${chalk.underline(
+              filename,
+            )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
+          ),
+        );
         return substr;
       }
 
@@ -197,6 +234,10 @@ export function embedme(sourceText: string, inputFilePath: string): string {
           return 0;
         }
 
+        if (line.length === 0) {
+          return Infinity; //empty lines shouldn't count
+        }
+
         const leadingSpaces = line.match(/^[\s]+/m);
 
         if (!leadingSpaces) {
@@ -210,7 +251,24 @@ export function embedme(sourceText: string, inputFilePath: string): string {
 
       const outputCode = lines.join('\n');
 
-      console.info(`Embedded code snippet from file ${filename}`);
+      if (/```/.test(outputCode)) {
+        log(
+          chalk.red(
+            `    Output snippet for file ${chalk.underline(
+              filename,
+            )} contains a code fence. Refusing to embed as that would break the document`,
+          ),
+        );
+        return substr;
+      }
+
+      log(
+        chalk.green(
+          `    Embedded code snippet (${chalk.bold(lines.length + ' lines')}) from file ${chalk.underline(
+            commentedFilename,
+          )}`,
+        ),
+      );
 
       return `\`\`\`${codeExtension}
 ${firstLine}

@@ -22,7 +22,7 @@
     "------------------ RELEASE COMMANDS ------------------": "",
     "semantic-release": "semantic-release",
     "readme:build": "yarn start",
-    "readme:check": "yarn readme:build && ! git status | grep README.md || (echo 'You must commit build and commit changes to README.md!' && exit 1)"
+    "readme:check": "yarn readme:build --verify"
   },
   "devDependencies": {
     "@types/node": "12.0.8",
@@ -35,5 +35,9 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "chalk": "2.4.2",
+    "commander": "2.20.0"
   }
 }
