@@ -15,7 +15,7 @@ file. For example
     This is a *markdown* document with a code block:
 
     ```ts
-    <!-- example.ts -->
+    // example.ts
     ```
 
 Next, run the following
@@ -29,7 +29,7 @@ Et voilà! Your README.md file will be updated with the content of your source f
     This is a *markdown* document with a code block:
 
     ```ts
-    <!-- example.ts -->
+    // example.ts
     export function hello(name: string): string {
       return `Hello ${name}!, how are you today?`;
     }
