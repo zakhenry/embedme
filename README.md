@@ -109,5 +109,4 @@ Feel free to raise a PR for any of these items!
   - `--verify-no-changes` to readme in CI (this will be helpful to prevent people who don't know the code source
     is outside the readme)
   - do a `--dry-run` and output to stdout so devs can preview without read of overwriting
-- Refactor supported language feature into language families so many C-like languages, or python & bash etc are easily supported
 - Blog post!
