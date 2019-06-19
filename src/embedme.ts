@@ -25,16 +25,16 @@ const { args: sourceFiles } = program;
 
 const options: EmbedmeOptions = (program as unknown) as EmbedmeOptions;
 
-if (options.stdout) {
-  options.dryRun = true;
-}
-
 const log = logBuilder(options);
+
+if (options.stdout && sourceFiles.length > 1) {
+  log(chalk.yellow(`More than one file matched your input, results will be concatenated in stdout`));
+}
 
 if (options.stripEmbedComment && !options.stdout) {
   log(
     chalk.red(
-      `If you use the --strip-embed-comment flag, you must use the --stdout flag and pipe the result to your destination file, otherwise your source file(s) will be rewritten and comment source is lost.`,
+      `If you use the --strip-embed-comment flag, you must use the --stdout flag and redirect the result to your destination file, otherwise your source file(s) will be rewritten and comment source is lost.`,
     ),
   );
   process.exit(1);
@@ -45,6 +45,8 @@ sourceFiles.forEach(source => {
     log(chalk.blue(`Verifying...`));
   } else if (options.dryRun) {
     log(chalk.blue(`Doing a dry run...`));
+  } else if (options.stdout) {
+    log(chalk.blue(`Outputting to stdout...`));
   } else {
     log(chalk.blue(`Embedding...`));
   }

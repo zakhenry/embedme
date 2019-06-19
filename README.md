@@ -80,7 +80,7 @@ also for yourself as a sanity check that you remembered to run it after updating
 ### Output to stdout
 
 Don't want to rewrite the file in-place? That's ok too - you can pass the flag `--stdout` to have the output pass to
-stdout - this will allow you to pipe the output to another file.
+stdout - this will allow you to redirect the output to another file.
 
 Additionally, in this mode a `--strip-embed-comment` flag is available, which allows embedme to exclude the matched
 comment from the output. This isn't generally recommended as the comment is generally unobtrusive, and will really help
@@ -96,7 +96,7 @@ embedme --stdout README.template.md > README.md
 ```
 
 Note that with `--stdout` flag the log output from embedme is redirected to stderr so you can still see the logs but the
-output can be piped.
+output can be redirected.
 
 ### Supported File Types (so far!)
 
