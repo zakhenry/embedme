@@ -43,7 +43,7 @@ As the comment is preserved, you can happily re-run `embedme` and it will run ag
 // readme/help-output.txt
 
 $ embedme --help
-Usage: embedme.bin [options] [...files]
+Usage: embedme [options] [...files]
 
 Options:
   -V, --version              output the version number
