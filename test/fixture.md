@@ -17,6 +17,7 @@ Typescript
 export function hello(): string {
   return 'Hello World';
 }
+
 ```
 
 Javascript
@@ -25,6 +26,7 @@ Javascript
 // sample.js
 
 console.log('Hello World');
+
 ```
 
 HTML
@@ -33,6 +35,7 @@ HTML
 <!-- sample.html -->
 
 <h1>Hello world</h1>
+
 ```
 
 Python
@@ -163,6 +166,7 @@ SCSS
     border: 1px solid red;
   }
 }
+
 ```
 
 PHP
@@ -225,7 +229,8 @@ Yaml
 # sample.yaml
 
 hello:
-  - world
+   - world
+
 ```
 
 Ruby
@@ -274,6 +279,17 @@ static void Main()
     Console.WriteLine("Press any key to exit.");
     Console.ReadKey();
 }
+```
+
+## Indented selection
+
+    ```ts
+    // sample.ts
+
+export function hello(): string {
+  return 'Hello World';
+}
+
 ```
 
 ## Errors

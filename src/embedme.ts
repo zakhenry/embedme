@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFileSync, writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { relative, resolve } from 'path';
 import { embedme, EmbedmeOptions, logBuilder } from './embedme.lib';
 import program from 'commander';
 import chalk from 'chalk';
@@ -40,17 +40,17 @@ if (options.stripEmbedComment && !options.stdout) {
   process.exit(1);
 }
 
-sourceFiles.forEach(source => {
-  if (options.verify) {
-    log(chalk.blue(`Verifying...`));
-  } else if (options.dryRun) {
-    log(chalk.blue(`Doing a dry run...`));
-  } else if (options.stdout) {
-    log(chalk.blue(`Outputting to stdout...`));
-  } else {
-    log(chalk.blue(`Embedding...`));
-  }
+if (options.verify) {
+  log(chalk.blue(`Verifying...`));
+} else if (options.dryRun) {
+  log(chalk.blue(`Doing a dry run...`));
+} else if (options.stdout) {
+  log(chalk.blue(`Outputting to stdout...`));
+} else {
+  log(chalk.blue(`Embedding...`));
+}
 
+sourceFiles.forEach(source => {
   const sourceText = readFileSync(source, 'utf-8');
 
   const resolvedPath = resolve(source);
@@ -65,6 +65,7 @@ sourceFiles.forEach(source => {
   } else if (options.stdout) {
     process.stdout.write(outText);
   } else if (!options.dryRun) {
+    log(chalk.magenta(`  Writing ${chalk.underline(relative(process.cwd(), resolvedPath))} with embedded changes.`));
     writeFileSync(source, outText);
   }
 });
