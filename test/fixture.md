@@ -276,22 +276,60 @@ static void Main()
 }
 ```
 
+## Indented selection
+
+    ```ts
+    // sample.ts
+
+    export function hello(): string {
+      return 'Hello World';
+    }
+
+    ```
+
+## Embedme Ignore
+
+<!-- embedme-ignore-next -->
+
+```ts
+// sample.ts
+```
+
 ## Errors
+
+### Empty block
+
+```ts
+```
+
+### No file handler
 
 ```binary
 01001000 01100101 01101100 01101100 01101111 00100000 01010111 01101111 01110010 01101100 01100100
 ```
 
+### No file extension
+
 ```
 Ignored block
 ```
+
+### Bad file format
 
 ```ts
 // Not a file
 ```
 
+### Also bad file format
+
 ```ts
 // also-not-a-file
+```
+
+### Missing file
+
+```txt
+// this-file-does-not-exist.txt
 ```
 
 ### Contains Codefence

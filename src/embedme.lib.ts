@@ -1,6 +1,6 @@
-import { existsSync, readFileSync } from 'fs';
-import { resolve } from 'path';
 import chalk from 'chalk';
+import { existsSync, readFileSync } from 'fs';
+import { relative, resolve } from 'path';
 
 /**
  * This simple script looks for code fences in source file for a syntax that looks like a file reference, optionally
@@ -146,151 +146,250 @@ export const logBuilder = (options: EmbedmeOptions) => (...messages: string[]) =
   }
 };
 
-/**
- * Match a codefence, capture groups around the file extension (optional) and first line starting with // (optional)
- */
-const codeFenceMatcher: RegExp = /```([\S]*)$\n([\s\S]*?$)?([\s\S]*?)\n?```/gm;
+/* @internal */
+function getReplacement(
+  inputFilePath: string,
+  options: EmbedmeOptions,
+  logMethod: ReturnType<typeof logBuilder>,
+  substr: string,
+  leadingSpaces: string,
+  codeExtension: SupportedFileType,
+  firstLine: string | null,
+  startLineNumber: number,
+  ignoreNext: boolean,
+): string {
+  /**
+   * Re-declare the log class, prefixing each snippet with the file and line number
+   * Note that we couldn't have derived the line count in the parent regex matcher, as we don't yet know how long the
+   * embed is going to be.
+   */
+  const log = ({ returnSnippet }: { returnSnippet: string }, ...messages: string[]) => {
+    const endLineNumber = returnSnippet.split('\n').length + startLineNumber - 1;
+
+    const logPrefix = chalk.gray(`   ${relative(process.cwd(), inputFilePath)}#L${startLineNumber}-L${endLineNumber}`);
+
+    logMethod(logPrefix, ...messages);
+  };
+
+  if (!firstLine) {
+    log({ returnSnippet: substr }, chalk.blue(`Code block is empty, skipping...`));
+    return substr;
+  }
+
+  if (!codeExtension) {
+    log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
+    return substr;
+    return substr;
+  }
+
+  if (ignoreNext) {
+    log({ returnSnippet: substr }, chalk.blue(`<!-- embedme-ignore-next --> comment detected, skipping code block...`));
+    return substr;
+  }
+
+  const supportedFileTypes: SupportedFileType[] = Object.values(SupportedFileType).filter(x => typeof x === 'string');
+
+  if (supportedFileTypes.indexOf(codeExtension) < 0) {
+    log(
+      { returnSnippet: substr },
+      chalk.yellow(
+        `Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
+          ', ',
+        )}, skipping code block`,
+      ),
+    );
+    return substr;
+  }
+
+  const languageFamily: CommentFamily | null = lookupLanguageCommentFamily(codeExtension);
+
+  if (languageFamily == null) {
+    log(
+      { returnSnippet: substr },
+      chalk.red(
+        `File extension ${chalk.underline(
+          codeExtension,
+        )} marked as supported, but comment family could not be determined. Please report this issue.`,
+      ),
+    );
+    return substr;
+  }
+
+  const commentedFilename = filetypeCommentReaders[languageFamily](firstLine);
+
+  if (!commentedFilename) {
+    log(
+      { returnSnippet: substr },
+      chalk.gray(`No comment detected in first line for block with extension ${codeExtension}`),
+    );
+    return substr;
+  }
+
+  const matches = commentedFilename.match(/\s?(\S+?\.\S+?)((#L(\d+)-L(\d+))|$)/m);
+
+  if (!matches) {
+    log({ returnSnippet: substr }, chalk.gray(`No file found in first comment block`));
+    return substr;
+  }
+
+  const [, filename, , lineNumbering, startLine, endLine] = matches;
+  if (filename.includes('#')) {
+    log(
+      { returnSnippet: substr },
+      chalk.red(
+        `Incorrectly formatted line numbering string ${chalk.underline(
+          filename,
+        )}, Expecting Github formatting e.g. #L10-L20`,
+      ),
+    );
+    return substr;
+  }
+
+  const relativePath = options.sourceRoot
+    ? resolve(process.cwd(), options.sourceRoot, filename)
+    : resolve(inputFilePath, '..', filename);
+
+  if (!existsSync(relativePath)) {
+    log(
+      { returnSnippet: substr },
+      chalk.red(
+        `Found filename ${chalk.underline(
+          filename,
+        )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
+      ),
+    );
+    return substr;
+  }
+
+  const file = readFileSync(relativePath, 'utf8');
+
+  let lines = file.split('\n');
+  if (lineNumbering) {
+    lines = lines.slice(+startLine - 1, +endLine);
+  }
+
+  const minimumLeadingSpaces = lines.reduce((minSpaces: number, line: string) => {
+    if (minSpaces === 0) {
+      return 0;
+    }
+
+    if (line.length === 0) {
+      return Infinity; //empty lines shouldn't count
+    }
+
+    const leadingSpaces = line.match(/^[\s]+/m);
+
+    if (!leadingSpaces) {
+      return 0;
+    }
+
+    return Math.min(minSpaces, leadingSpaces[0].length);
+  }, Infinity);
+
+  lines = lines.map(line => line.slice(minimumLeadingSpaces));
+
+  const outputCode = lines.join('\n');
+
+  if (/```/.test(outputCode)) {
+    log(
+      { returnSnippet: substr },
+      chalk.red(
+        `Output snippet for file ${chalk.underline(
+          filename,
+        )} contains a code fence. Refusing to embed as that would break the document`,
+      ),
+    );
+    return substr;
+  }
+
+  let replacement = options.stripEmbedComment
+    ? `\`\`\`${codeExtension}
+${outputCode}
+\`\`\``
+    : `\`\`\`${codeExtension}
+${firstLine.trim()}
+
+${outputCode}
+\`\`\``;
+
+  if (leadingSpaces.length) {
+    replacement = replacement
+      .split('\n')
+      .map(line => leadingSpaces + line)
+      .join('\n');
+  }
+
+  if (replacement === substr) {
+    log({ returnSnippet: substr }, chalk.gray(`No changes required, already up to date`));
+    return substr;
+  }
+
+  log(
+    { returnSnippet: replacement },
+    chalk.green(
+      `Embedded ${chalk.greenBright(lines.length + ' lines')} from file ${chalk.underline(commentedFilename)}`,
+    ),
+  );
+
+  return replacement;
+}
+
+function getLineNumber(text: string, index: number): number {
+  return text.substring(0, index).split('\n').length;
+}
 
 export function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): string {
   const log = logBuilder(options);
 
-  log(chalk.magenta(`  Analysing ${chalk.underline(inputFilePath)}...`));
+  log(chalk.magenta(`  Analysing ${chalk.underline(relative(process.cwd(), inputFilePath))}...`));
 
-  return sourceText.replace(
-    codeFenceMatcher,
-    (substr: string, codeExtension: SupportedFileType, firstLine?: string) => {
-      if (!firstLine || !codeExtension) {
-        return substr;
+  /**
+   * Match a codefence, capture groups around the file extension (optional) and first line starting with // (optional)
+   */
+  const codeFenceFinder: RegExp = /([ \t]*?)```([\s\S]*?)^[ \t]*?```/gm;
+
+  const docPartials = [];
+
+  let previousEnd = 0;
+
+  let result: RegExpExecArray | null;
+  while ((result = codeFenceFinder.exec(sourceText)) !== null) {
+    const [codeFence, leadingSpaces] = result;
+    const start = sourceText.substring(previousEnd, result.index);
+
+    const extensionMatch = codeFence.match(/```(\S*)/);
+
+    const codeExtension = extensionMatch ? extensionMatch[1] : null;
+    const splitFence = codeFence.split('\n');
+    const firstLine = splitFence.length >= 3 ? splitFence[1] : null;
+
+    /**
+     * Working out the starting line number is slightly complex as the logic differs depending on whether or not we are
+     * writing to the file.
+     */
+    const startLineNumber = (() => {
+      if (options.dryRun || options.stdout || options.verify) {
+        return getLineNumber(sourceText.substring(0, result.index), result.index);
       }
+      const startingLineNumber = docPartials.join('').split('\n').length - 1;
+      return startingLineNumber + getLineNumber(sourceText.substring(previousEnd, result.index), result.index);
+    })();
 
-      const supportedFileTypes: SupportedFileType[] = Object.values(SupportedFileType).filter(
-        x => typeof x === 'string',
-      );
+    const replacement = getReplacement(
+      inputFilePath,
+      options,
+      log,
+      codeFence,
+      leadingSpaces,
+      codeExtension as SupportedFileType,
+      firstLine,
+      startLineNumber,
+      /<!--\s*?embedme-ignore-next\s*?-->/g.test(start),
+    );
 
-      if (supportedFileTypes.indexOf(codeExtension) < 0) {
-        log(
-          chalk.yellow(
-            `    Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
-              ', ',
-            )}, skipping code block`,
-          ),
-        );
-        return substr;
-      }
+    docPartials.push(start, replacement);
+    previousEnd = codeFenceFinder.lastIndex;
+  }
 
-      const languageFamily: CommentFamily | null = lookupLanguageCommentFamily(codeExtension);
-
-      if (languageFamily == null) {
-        log(
-          chalk.red(
-            `    File extension ${chalk.underline(
-              codeExtension,
-            )} marked as supported, but comment family could not be determined. Please report this issue.`,
-          ),
-        );
-        return substr;
-      }
-
-      const commentedFilename = filetypeCommentReaders[languageFamily](firstLine);
-
-      if (!commentedFilename) {
-        log(chalk.gray(`    No comment detected in first line for block with extension ${codeExtension}`));
-        return substr;
-      }
-
-      const matches = commentedFilename.match(/\s?(\S+?\.\S+?)((#L(\d+)-L(\d+))|$)/m);
-
-      if (!matches) {
-        log(chalk.gray(`    No file found in first comment block`));
-        return substr;
-      }
-
-      const [, filename, , lineNumbering, startLine, endLine] = matches;
-      if (filename.includes('#')) {
-        log(
-          chalk.red(
-            `    Incorrectly formatted line numbering string ${chalk.underline(
-              filename,
-            )}, Expecting Github formatting e.g. #L10-L20`,
-          ),
-        );
-        return substr;
-      }
-
-      const relativePath = options.sourceRoot
-        ? resolve(process.cwd(), options.sourceRoot, filename)
-        : resolve(inputFilePath, '..', filename);
-
-      if (!existsSync(relativePath)) {
-        log(
-          chalk.red(
-            `    Found filename ${chalk.underline(
-              filename,
-            )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
-          ),
-        );
-        return substr;
-      }
-
-      const file = readFileSync(relativePath, 'utf8');
-
-      let lines = file.split('\n');
-      if (lineNumbering) {
-        lines = lines.slice(+startLine - 1, +endLine);
-      }
-
-      const minimumLeadingSpaces = lines.reduce((minSpaces: number, line: string) => {
-        if (minSpaces === 0) {
-          return 0;
-        }
-
-        if (line.length === 0) {
-          return Infinity; //empty lines shouldn't count
-        }
-
-        const leadingSpaces = line.match(/^[\s]+/m);
-
-        if (!leadingSpaces) {
-          return 0;
-        }
-
-        return Math.min(minSpaces, leadingSpaces[0].length);
-      }, Infinity);
-
-      lines = lines.map(line => line.slice(minimumLeadingSpaces));
-
-      const outputCode = lines.join('\n');
-
-      if (/```/.test(outputCode)) {
-        log(
-          chalk.red(
-            `    Output snippet for file ${chalk.underline(
-              filename,
-            )} contains a code fence. Refusing to embed as that would break the document`,
-          ),
-        );
-        return substr;
-      }
-
-      log(
-        chalk.green(
-          `    Embedded code snippet (${chalk.bold(lines.length + ' lines')}) from file ${chalk.underline(
-            commentedFilename,
-          )}`,
-        ),
-      );
-
-      if (options.stripEmbedComment) {
-        return `\`\`\`${codeExtension}
-${outputCode}
-\`\`\``;
-      }
-
-      return `\`\`\`${codeExtension}
-${firstLine}
-
-${outputCode}
-\`\`\``;
-    },
-  );
+  return [...docPartials].join('') + sourceText.substring(previousEnd);
 }
