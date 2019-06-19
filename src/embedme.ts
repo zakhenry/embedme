@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { relative, resolve } from 'path';
 import { embedme, EmbedmeOptions, logBuilder } from './embedme.lib';
 import program from 'commander';
@@ -51,9 +51,15 @@ if (options.verify) {
 }
 
 sourceFiles.forEach(source => {
-  const sourceText = readFileSync(source, 'utf-8');
-
   const resolvedPath = resolve(source);
+
+  if (!existsSync(source)) {
+    log(chalk.red(`  File ${chalk.underline(relative(process.cwd(), resolvedPath))} does not exist.`));
+    process.exit(1);
+    return;
+  }
+
+  const sourceText = readFileSync(source, 'utf-8');
 
   const outText = embedme(sourceText, resolvedPath, options);
 
@@ -65,7 +71,11 @@ sourceFiles.forEach(source => {
   } else if (options.stdout) {
     process.stdout.write(outText);
   } else if (!options.dryRun) {
-    log(chalk.magenta(`  Writing ${chalk.underline(relative(process.cwd(), resolvedPath))} with embedded changes.`));
-    writeFileSync(source, outText);
+    if (sourceText !== outText) {
+      log(chalk.magenta(`  Writing ${chalk.underline(relative(process.cwd(), resolvedPath))} with embedded changes.`));
+      writeFileSync(source, outText);
+    } else {
+      log(chalk.magenta(`  No changes to write for ${chalk.underline(relative(process.cwd(), resolvedPath))}`));
+    }
   }
 });

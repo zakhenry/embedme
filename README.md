@@ -6,13 +6,15 @@ Simple utility to embed source files into markdown code blocks <sup>[why tho?](#
 [![Build Status](https://travis-ci.org/zakhenry/embedme.svg?branch=master)](https://travis-ci.org/zakhenry/embedme)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](https://commitizen.github.io/cz-cli/)
 
-![Console Output](readme/screenshot.png "Console Output")
+![Console Output](readme/screenshot.png 'Console Output')
 
 ## Usage
 
 With a `README.md` in your current working directory, add a code block for one of the
 [supported file types](#supported-file-types-so-far) and start the code block simply with a comment with the path to a
 file. For example
+
+<!-- embedme-ignore-next -->
 
     This is a *markdown* document with a code block:
 
@@ -31,10 +33,12 @@ Et voilà! Your README.md file will be updated with the content of your source f
     This is a *markdown* document with a code block:
 
     ```ts
-    // example.ts
-    export function hello(name: string): string {
+    // readme/example.ts
+
+    export function helloWorld(name: string): string {
       return `Hello ${name}!, how are you today?`;
     }
+
     ```
 
 As the comment is preserved, you can happily re-run `embedme` and it will run again but there will be no changes.

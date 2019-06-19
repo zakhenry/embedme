@@ -152,15 +152,12 @@ function getReplacement(
   options: EmbedmeOptions,
   logMethod: ReturnType<typeof logBuilder>,
   substr: string,
+  leadingSpaces: string,
   codeExtension: SupportedFileType,
   firstLine: string | null,
   startLineNumber: number,
+  ignoreNext: boolean,
 ): string {
-  if (!firstLine || !codeExtension) {
-    // @todo add log
-    return substr;
-  }
-
   /**
    * Re-declare the log class, prefixing each snippet with the file and line number
    * Note that we couldn't have derived the line count in the parent regex matcher, as we don't yet know how long the
@@ -173,6 +170,22 @@ function getReplacement(
 
     logMethod(logPrefix, ...messages);
   };
+
+  if (!firstLine) {
+    log({ returnSnippet: substr }, chalk.blue(`Code block is empty, skipping...`));
+    return substr;
+  }
+
+  if (!codeExtension) {
+    log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
+    return substr;
+    return substr;
+  }
+
+  if (ignoreNext) {
+    log({ returnSnippet: substr }, chalk.blue(`<!-- embedme-ignore-next --> comment detected, skipping code block...`));
+    return substr;
+  }
 
   const supportedFileTypes: SupportedFileType[] = Object.values(SupportedFileType).filter(x => typeof x === 'string');
 
@@ -273,7 +286,7 @@ function getReplacement(
     return Math.min(minSpaces, leadingSpaces[0].length);
   }, Infinity);
 
-      lines = lines.map(line => line.slice(minimumLeadingSpaces));
+  lines = lines.map(line => line.slice(minimumLeadingSpaces));
 
   const outputCode = lines.join('\n');
 
@@ -289,15 +302,27 @@ function getReplacement(
     return substr;
   }
 
-  const replacement = options.stripEmbedComment
+  let replacement = options.stripEmbedComment
     ? `\`\`\`${codeExtension}
 ${outputCode}
 \`\`\``
     : `\`\`\`${codeExtension}
-${firstLine}
+${firstLine.trim()}
 
 ${outputCode}
 \`\`\``;
+
+  if (leadingSpaces.length) {
+    replacement = replacement
+      .split('\n')
+      .map(line => leadingSpaces + line)
+      .join('\n');
+  }
+
+  if (replacement === substr) {
+    log({ returnSnippet: substr }, chalk.gray(`No changes required, already up to date`));
+    return substr;
+  }
 
   log(
     { returnSnippet: replacement },
@@ -321,7 +346,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
   /**
    * Match a codefence, capture groups around the file extension (optional) and first line starting with // (optional)
    */
-  const codeFenceFinder: RegExp = /```([\S]*)$\n([\s\S]*?$)?([\s\S]*?)\n?```/gm;
+  const codeFenceFinder: RegExp = /([ \t]*?)```([\s\S]*?)^[ \t]*?```/gm;
 
   const docPartials = [];
 
@@ -329,7 +354,14 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
 
   let result: RegExpExecArray | null;
   while ((result = codeFenceFinder.exec(sourceText)) !== null) {
-    const [substr, codeExtension, firstLine] = result;
+    const [codeFence, leadingSpaces] = result;
+    const start = sourceText.substring(previousEnd, result.index);
+
+    const extensionMatch = codeFence.match(/```(\S*)/);
+
+    const codeExtension = extensionMatch ? extensionMatch[1] : null;
+    const splitFence = codeFence.split('\n');
+    const firstLine = splitFence.length >= 3 ? splitFence[1] : null;
 
     /**
      * Working out the starting line number is slightly complex as the logic differs depending on whether or not we are
@@ -347,17 +379,16 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
       inputFilePath,
       options,
       log,
-      substr,
+      codeFence,
+      leadingSpaces,
       codeExtension as SupportedFileType,
       firstLine,
       startLineNumber,
+      /<!--\s*?embedme-ignore-next\s*?-->/g.test(start),
     );
 
-    const start = sourceText.substring(previousEnd, result.index);
-
-    previousEnd = codeFenceFinder.lastIndex;
-
     docPartials.push(start, replacement);
+    previousEnd = codeFenceFinder.lastIndex;
   }
 
   return [...docPartials].join('') + sourceText.substring(previousEnd);
