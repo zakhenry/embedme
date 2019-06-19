@@ -77,6 +77,27 @@ If you're using continuous integration, you can pass the flag `--verify` to `emb
 expected to your files. This is useful for repositories with multiple contributors who may not know about `embedme`, and
 also for yourself as a sanity check that you remembered to run it after updating sample code!
 
+### Output to stdout
+
+Don't want to rewrite the file in-place? That's ok too - you can pass the flag `--stdout` to have the output pass to
+stdout - this will allow you to pipe the output to another file.
+
+Additionally, in this mode a `--strip-embed-comment` flag is available, which allows embedme to exclude the matched
+comment from the output. This isn't generally recommended as the comment is generally unobtrusive, and will really help
+maintainers to know where they should go to update the file.
+
+Example
+
+```sh
+# readme/output-to-std-out.sh
+
+embedme --stdout README.template.md > README.md
+
+```
+
+Note that with `--stdout` flag the log output from embedme is redirected to stderr so you can still see the logs but the
+output can be piped.
+
 ### Supported File Types (so far!)
 
 Here's a list of file types supported by this utility, if you have a need for another language please feel free to

@@ -26,7 +26,6 @@ const { args: sourceFiles } = program;
 const options: EmbedmeOptions = (program as unknown) as EmbedmeOptions;
 
 if (options.stdout) {
-  options.silent = true;
   options.dryRun = true;
 }
 
