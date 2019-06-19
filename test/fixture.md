@@ -1,9 +1,12 @@
 # File types
 
-```md
-<!-- sample.md -->
+Plain Text
 
-# Hello World
+```txt
+// sample.txt
+
+This file is unformatted plain text
+
 ```
 
 Typescript

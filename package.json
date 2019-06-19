@@ -9,6 +9,7 @@
   "bin": "./dist/embedme.bin.js",
   "scripts": {
     "build": "tsc",
+    "write-help-output": "echo \"$ embedme --help\" > readme/help-output.txt && node dist/embedme.bin.js --help >> readme/help-output.txt",
     "start": "node dist/embedme.bin.js README.md",
     "test:write": "node dist/embedme.bin.js test/fixture.md && yarn prettier:write",
     "test:check": "! git status | grep test/fixture.md || (echo 'You must commit build and commit changes to test/fixture.md!' && exit 1)",
@@ -21,7 +22,7 @@
     "prettier:check": "yarn run prettier:base --list-different",
     "------------------ RELEASE COMMANDS ------------------": "",
     "semantic-release": "semantic-release",
-    "readme:build": "yarn start",
+    "readme:build": "yarn write-help-output && yarn start",
     "readme:check": "yarn readme:build --verify"
   },
   "devDependencies": {
