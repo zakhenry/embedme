@@ -37,9 +37,12 @@ export interface EmbedmeOptions {
   dryRun: boolean;
   verify: boolean;
   silent: boolean;
+  stdout: boolean;
+  stripEmbedComment: boolean;
 }
 
 enum SupportedFileType {
+  PLAIN_TEXT = 'txt',
   TYPESCRIPT = 'ts',
   JAVASCRIPT = 'js',
   SCSS = 'scss',
@@ -72,6 +75,7 @@ enum CommentFamily {
 
 const languageMap: Record<CommentFamily, SupportedFileType[]> = {
   [CommentFamily.C]: [
+    SupportedFileType.PLAIN_TEXT, // this is a lie, but we gotta pick something
     SupportedFileType.C,
     SupportedFileType.TYPESCRIPT,
     SupportedFileType.JAVASCRIPT,
@@ -132,7 +136,13 @@ function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily
 
 export const logBuilder = (options: EmbedmeOptions) => (...messages: string[]) => {
   if (!options.silent) {
-    console.log(...messages);
+    if (options.stdout) {
+      // as we're putting the resulting file out of stdout, we redirect the logs to stderr so they can still be seen,
+      // but won't be piped
+      console.error(...messages);
+    } else {
+      console.log(...messages);
+    }
   }
 };
 
@@ -269,6 +279,12 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
           )}`,
         ),
       );
+
+      if (options.stripEmbedComment) {
+        return `\`\`\`${codeExtension}
+${outputCode}
+\`\`\``;
+      }
 
       return `\`\`\`${codeExtension}
 ${firstLine}
