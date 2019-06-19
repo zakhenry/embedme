@@ -104,9 +104,7 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L42-L65
-
-}
+// src/embedme.lib.ts#L44-L68
 
 enum SupportedFileType {
   PLAIN_TEXT = 'txt',
@@ -130,6 +128,9 @@ enum SupportedFileType {
   C_SHARP = 'cs',
   SWIFT = 'swift',
   RUBY = 'rb',
+  KOTLIN = 'kotlin',
+  SCALA = 'scala',
+}
 ```
 
 ### Partial Snippets
