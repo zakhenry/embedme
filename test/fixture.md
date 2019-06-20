@@ -295,6 +295,24 @@ static void Main()
 // sample.ts
 ```
 
+## Embedme Ignore alt syntax
+
+<!-- embedme ignore-next -->
+
+```ts
+// sample.ts
+```
+
+## Embed with comment
+
+<!-- embedme sample.ts -->
+
+```ts
+export function hello(): string {
+  return 'Hello World';
+}
+```
+
 ## Errors
 
 ### Empty block

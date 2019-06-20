@@ -45,9 +45,9 @@ As the comment is preserved, you can happily re-run `embedme` and it will run ag
 
 ## Features
 
-```txt
-// readme/help-output.txt
+<!-- embedme readme/help-output.txt -->
 
+```txt
 $ embedme --help
 Usage: embedme [options] [...files]
 
@@ -63,48 +63,16 @@ Options:
 
 ```
 
+### Partial Snippets
+
+Very often you only want to highlight a small part of a file, to do so simply suffix the filename with the Gitlab line
+number syntax, e.g. `path/to/my/file.ts#L20-30`.
+
 ### Multi Language
 
 `embedme` simply uses the file type hint in a code fence to choose a strategy for finding the commented filename in the
 first line of the code block. This is a relatively trivial regular expression, so many more languages can be supported
 in future
-
-### Glob matching
-
-If you want to run `embedme` over multiple files, you can use glob matching, i.e.
-
-```bash
-embedme src/**/*.md
-```
-
-### CI Checks
-
-If you're using continuous integration, you can pass the flag `--verify` to `embedme` to check that there are no changes
-expected to your files. This is useful for repositories with multiple contributors who may not know about `embedme`, and
-also for yourself as a sanity check that you remembered to run it after updating sample code!
-
-### Output to stdout
-
-Don't want to rewrite the file in-place? That's ok too - you can pass the flag `--stdout` to have the output pass to
-stdout - this will allow you to redirect the output to another file.
-
-Additionally, in this mode a `--strip-embed-comment` flag is available, which allows embedme to exclude the matched
-comment from the output. This isn't generally recommended as the comment is generally unobtrusive, and will really help
-maintainers to know where they should go to update the file.
-
-Example
-
-```sh
-# readme/output-to-std-out.sh
-
-embedme --stdout README.template.md > README.md
-
-```
-
-Note that with `--stdout` flag the log output from embedme is redirected to stderr so you can still see the logs but the
-output can be redirected.
-
-### Supported File Types (so far!)
 
 Here's a list of file types supported by this utility, if you have a need for another language please feel free to
 contribute, it is easy!
@@ -139,10 +107,73 @@ enum SupportedFileType {
 }
 ```
 
-### Partial Snippets
+### Alternate embedding syntax
 
-Very often you only want to highlight a small part of a file, to do so simply suffix the filename with the Gitlab line
-number syntax, e.g. `path/to/my/file.ts#L20-30`.
+It is recommended to use the syntax described above as it is a good hint for readers and maintainers where the source of
+this file is, however in some situations you may want to omit the comment in the code block, but still benefit from the
+embedding behaviour of embedme.
+
+This can be achieved by preceding the code block with a markdown comment in the form of `<!-- embedme path/to/your/file.txt -->`
+
+For example:
+
+<!-- embedme-ignore-next -->
+
+    <!-- embedme example.ts -->
+    This is a *markdown* document with a code block:
+
+    ```ts
+    ```
+
+Will result in the following output
+
+    <!-- embedme readme/example.ts -->
+    This is a *markdown* document with a code block:
+
+    ```ts
+    export function helloWorld(name: string): string {
+      return `Hello ${name}!, how are you today?`;
+    }
+
+    ```
+
+### Glob matching
+
+If you want to run `embedme` over multiple files, you can use glob matching, i.e.
+
+```bash
+embedme src/**/*.md
+```
+
+Note that this globbing is shell expansion, not internally handled so _don't_ quote the glob expression. You can test
+you output with `ls`, i.e. `ls src/**/*.md`
+
+### CI Checks
+
+If you're using continuous integration, you can pass the flag `--verify` to `embedme` to check that there are no changes
+expected to your files. This is useful for repositories with multiple contributors who may not know about `embedme`, and
+also for yourself as a sanity check that you remembered to run it after updating sample code!
+
+### Output to stdout
+
+Don't want to rewrite the file in-place? That's ok too - you can pass the flag `--stdout` to have the output pass to
+stdout - this will allow you to redirect the output to another file.
+
+Additionally, in this mode a `--strip-embed-comment` flag is available, which allows embedme to exclude the matched
+comment from the output. This isn't generally recommended as the comment is generally unobtrusive, and will really help
+maintainers to know where they should go to update the file.
+
+Example
+
+```sh
+# readme/output-to-std-out.sh
+
+embedme --stdout README.template.md > README.md
+
+```
+
+Note that with `--stdout` flag the log output from embedme is redirected to stderr so you can still see the logs but the
+output can be redirected.
 
 ## Why?
 
