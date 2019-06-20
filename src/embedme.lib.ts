@@ -154,9 +154,10 @@ function getReplacement(
   substr: string,
   leadingSpaces: string,
   codeExtension: SupportedFileType,
-  firstLine: string | null,
+  firstLine: string,
   startLineNumber: number,
   ignoreNext: boolean,
+  commentEmbedOverrideFilepath?: string,
 ): string {
   /**
    * Re-declare the log class, prefixing each snippet with the file and line number
@@ -171,19 +172,18 @@ function getReplacement(
     logMethod(logPrefix, ...messages);
   };
 
-  if (!firstLine) {
-    log({ returnSnippet: substr }, chalk.blue(`Code block is empty, skipping...`));
-    return substr;
-  }
-
   if (!codeExtension) {
     log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
     return substr;
+  }
+
+  if (!firstLine && !commentEmbedOverrideFilepath) {
+    log({ returnSnippet: substr }, chalk.blue(`Code block is empty & no preceding embedme comment, skipping...`));
     return substr;
   }
 
   if (ignoreNext) {
-    log({ returnSnippet: substr }, chalk.blue(`<!-- embedme-ignore-next --> comment detected, skipping code block...`));
+    log({ returnSnippet: substr }, chalk.blue(`"Ignore next" comment detected, skipping code block...`));
     return substr;
   }
 
@@ -215,7 +215,7 @@ function getReplacement(
     return substr;
   }
 
-  const commentedFilename = filetypeCommentReaders[languageFamily](firstLine);
+  const commentedFilename = commentEmbedOverrideFilepath || filetypeCommentReaders[languageFamily](firstLine);
 
   if (!commentedFilename) {
     log(
@@ -302,11 +302,12 @@ function getReplacement(
     return substr;
   }
 
-  let replacement = options.stripEmbedComment
-    ? `\`\`\`${codeExtension}
+  let replacement =
+    !!commentEmbedOverrideFilepath || options.stripEmbedComment
+      ? `\`\`\`${codeExtension}
 ${outputCode}
 \`\`\``
-    : `\`\`\`${codeExtension}
+      : `\`\`\`${codeExtension}
 ${firstLine.trim()}
 
 ${outputCode}
@@ -375,6 +376,8 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
       return startingLineNumber + getLineNumber(sourceText.substring(previousEnd, result.index), result.index);
     })();
 
+    const commentInsertion = start.match(/<!--\s*?embedme[ ]+?(\S+?)\s*?-->/);
+
     const replacement = getReplacement(
       inputFilePath,
       options,
@@ -382,9 +385,10 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
       codeFence,
       leadingSpaces,
       codeExtension as SupportedFileType,
-      firstLine,
+      firstLine || '',
       startLineNumber,
-      /<!--\s*?embedme-ignore-next\s*?-->/g.test(start),
+      /<!--\s*?embedme[ -]ignore-next\s*?-->/g.test(start),
+      commentInsertion ? commentInsertion[1] : undefined,
     );
 
     docPartials.push(start, replacement);
