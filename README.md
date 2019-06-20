@@ -11,7 +11,7 @@ Simple utility to embed source files into markdown code blocks <sup>[why tho?](#
 ## Usage
 
 With a `README.md` in your current working directory, add a code block for one of the
-[supported file types](#supported-file-types-so-far) and start the code block simply with a comment with the path to a
+[supported file types](#multi-language) and start the code block simply with a comment with the path to a
 file. For example
 
 <!-- embedme-ignore-next -->
