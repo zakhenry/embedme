@@ -6,7 +6,7 @@ Simple utility to embed source files into markdown code blocks <sup>[why tho?](#
 [![Build Status](https://travis-ci.org/zakhenry/embedme.svg?branch=master)](https://travis-ci.org/zakhenry/embedme)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](https://commitizen.github.io/cz-cli/)
 
-![Console Output](readme/screenshot.png 'Console Output')
+![Demo](readme/asciinema/demo.svg)
 
 ## Usage
 
@@ -33,7 +33,7 @@ Et voilà! Your README.md file will be updated with the content of your source f
     This is a *markdown* document with a code block:
 
     ```ts
-    // readme/example.ts
+    // example.ts
 
     export function helloWorld(name: string): string {
       return `Hello ${name}!, how are you today?`;
@@ -127,7 +127,7 @@ For example:
 
 Will result in the following output
 
-    <!-- embedme readme/example.ts -->
+    <!-- embedme example.ts -->
     This is a *markdown* document with a code block:
 
     ```ts
