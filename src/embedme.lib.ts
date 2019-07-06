@@ -46,7 +46,7 @@ enum SupportedFileType {
   TYPESCRIPT = 'ts',
   JAVASCRIPT = 'js',
   SCSS = 'scss',
-  RUST = 'rs',
+  RUST = 'rust',
   JAVA = 'java',
   CPP = 'cpp',
   C = 'c',
