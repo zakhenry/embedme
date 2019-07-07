@@ -241,7 +241,7 @@ JSON
 JSON5
 
 ```json5
-// sample.json
+// sample.json5
 
 {
   hello: 'world',

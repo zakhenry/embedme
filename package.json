@@ -17,7 +17,7 @@
     "commit": "git add . && git-cz",
     "------------------ LINT COMMANDS -----------------": "",
     "prettier": "prettier",
-    "prettier:base": "yarn run prettier \"**/*.{js,json,scss,md,ts,html}\"",
+    "prettier:base": "yarn run prettier \"**/*.{js,json,json5,scss,md,ts,html,yaml}\"",
     "prettier:write": "yarn run prettier:base --write",
     "prettier:check": "yarn run prettier:base --list-different",
     "------------------ RELEASE COMMANDS ------------------": "",
