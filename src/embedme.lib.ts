@@ -231,7 +231,7 @@ function getReplacement(
     return substr;
   }
 
-  const matches = commentedFilename.match(/\s?(\S+?\.\S+?)((#L(\d+)-L(\d+))|$)/m);
+  const matches = commentedFilename.match(/\s?(\S+?)((#L(\d+)-L(\d+))|$)/m);
 
   if (!matches) {
     log({ returnSnippet: substr }, chalk.gray(`No file found in first comment block`));

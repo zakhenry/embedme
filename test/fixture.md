@@ -281,6 +281,16 @@ object HelloWorld {
 
 ```
 
+## Extension-less selection
+
+```sh
+# sample
+
+#!/usr/bin/env bash
+print Hello World
+
+```
+
 ## Line selection
 
 ```cs
