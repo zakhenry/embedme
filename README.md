@@ -65,8 +65,8 @@ Options:
 
 ### Partial Snippets
 
-Very often you only want to highlight a small part of a file, to do so simply suffix the filename with the Gitlab line
-number syntax, e.g. `path/to/my/file.ts#L20-30`.
+Very often you only want to highlight a small part of a file, to do so simply suffix the filename with the GitHub line
+number syntax, e.g. `path/to/my/file.ts#L20-L30`.
 
 ### Multi Language
 
