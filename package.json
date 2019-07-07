@@ -38,7 +38,8 @@
     }
   },
   "dependencies": {
-    "chalk": "2.4.2",
-    "commander": "2.20.0"
+    "chalk": "~2.4.2",
+    "commander": "~2.20.0",
+    "gitignore-parser": "~0.0.2"
   }
 }

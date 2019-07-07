@@ -177,6 +177,12 @@ embedme --stdout README.template.md > README.md
 Note that with `--stdout` flag the log output from embedme is redirected to stderr so you can still see the logs but the
 output can be redirected.
 
+### Ignoring files
+
+By default `embedme` uses the local `.gitignore` file to exclude any files that match your input but are ignored. You
+can customise this ignore behavior by creating a `.embedmeignore` file, which uses the same syntax as `.gitignore`. This
+file will be used _instead of_ `.gitignore`, not merged.
+
 ## Why?
 
 > Why do I want this utility? Writing code in a markdown document is not difficult?
