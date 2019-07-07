@@ -46,7 +46,7 @@ print('Hello World')
 
 Rust
 
-```rs
+```rust
 // sample.rs
 
 fn main() {
