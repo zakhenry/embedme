@@ -54,6 +54,8 @@ enum SupportedFileType {
   XML = 'xml',
   MARKDOWN = 'md',
   YAML = 'yaml',
+  JSON = 'json',
+  JSON_5 = 'json5',
   PYTHON = 'py',
   BASH = 'bash',
   SHELL = 'sh',
@@ -68,12 +70,14 @@ enum SupportedFileType {
 }
 
 enum CommentFamily {
+  NONE, // some languages do not support comments, e.g. JSON
   C,
   XML,
   HASH,
 }
 
 const languageMap: Record<CommentFamily, SupportedFileType[]> = {
+  [CommentFamily.NONE]: [SupportedFileType.JSON],
   [CommentFamily.C]: [
     SupportedFileType.PLAIN_TEXT, // this is a lie, but we gotta pick something
     SupportedFileType.C,
@@ -90,6 +94,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.SWIFT,
     SupportedFileType.KOTLIN,
     SupportedFileType.SCALA,
+    SupportedFileType.JSON_5,
   ],
   [CommentFamily.XML]: [SupportedFileType.HTML, SupportedFileType.MARKDOWN, SupportedFileType.XML],
   [CommentFamily.HASH]: [
@@ -102,6 +107,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
 };
 
 const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> = {
+  [CommentFamily.NONE]: _ => null,
   [CommentFamily.C]: line => {
     const match = line.match(/\/\/\s?(\S*?$)/m);
     if (!match) {

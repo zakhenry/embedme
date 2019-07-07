@@ -228,6 +228,26 @@ hello:
   - world
 ```
 
+JSON
+
+<!-- embedme sample.json -->
+
+```json
+{
+  "hello": "world"
+}
+```
+
+JSON5
+
+```json5
+// sample.json
+
+{
+  hello: 'world',
+}
+```
+
 Ruby
 
 ```rb
@@ -370,4 +390,10 @@ Ignored block
 
 ```ts
 // sample.ts#L1-2
+```
+
+### missing comment on language embed with no comment support
+
+```json
+
 ```

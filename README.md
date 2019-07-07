@@ -78,7 +78,7 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L44-L68
+// src/embedme.lib.ts#L44-L70
 
 enum SupportedFileType {
   PLAIN_TEXT = 'txt',
@@ -93,6 +93,8 @@ enum SupportedFileType {
   XML = 'xml',
   MARKDOWN = 'md',
   YAML = 'yaml',
+  JSON = 'json',
+  JSON_5 = 'json5',
   PYTHON = 'py',
   BASH = 'bash',
   SHELL = 'sh',
