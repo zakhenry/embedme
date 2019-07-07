@@ -310,14 +310,8 @@ function getReplacement(
 
   let replacement =
     !!commentEmbedOverrideFilepath || options.stripEmbedComment
-      ? `\`\`\`${codeExtension}
-${outputCode}
-\`\`\``
-      : `\`\`\`${codeExtension}
-${firstLine.trim()}
-
-${outputCode}
-\`\`\``;
+      ? `\`\`\`${codeExtension}\n${outputCode}\n\`\`\``
+      : `\`\`\`${codeExtension}\n${firstLine.trim()}\n\n${outputCode}\n\`\`\``;
 
   if (leadingSpaces.length) {
     replacement = replacement
