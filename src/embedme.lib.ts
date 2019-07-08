@@ -67,6 +67,7 @@ enum SupportedFileType {
   RUBY = 'rb',
   KOTLIN = 'kotlin',
   SCALA = 'scala',
+  CRYSTAL = 'cr',
 }
 
 enum CommentFamily {
@@ -103,6 +104,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.SHELL,
     SupportedFileType.YAML,
     SupportedFileType.RUBY,
+    SupportedFileType.CRYSTAL,
   ],
 };
 

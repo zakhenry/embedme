@@ -257,6 +257,15 @@ puts 'Hello, world!'
 
 ```
 
+Ruby
+
+```cr
+# sample.cr
+
+puts 'Hello, world!'
+
+```
+
 Kotlin
 
 ```kotlin
