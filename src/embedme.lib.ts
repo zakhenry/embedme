@@ -327,7 +327,7 @@ function getReplacement(
     return substr;
   }
 
-  if (replacement.substr(-3).trimRight() === substr.substr(-3).trimRight()) {
+  if (replacement.slice(0, -3).trimRight() === substr.slice(0, -3).trimRight()) {
     log({ returnSnippet: substr }, chalk.gray(`Changes are trailing whitespace only, ignoring`));
     return substr;
   }
