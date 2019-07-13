@@ -141,7 +141,7 @@ const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> =
     return match[1];
   },
   [CommentFamily.HASH]: leadingSymbol('#'),
-  [CommentFamily.SINGLE_QUOTE]: leadingSymbol('//'),
+  [CommentFamily.SINGLE_QUOTE]: leadingSymbol(`'`),
   [CommentFamily.DOUBLE_PERCENT]: leadingSymbol('%%'),
 };
 
@@ -189,50 +189,55 @@ function getReplacement(
     logMethod(logPrefix, ...messages);
   };
 
-  if (!codeExtension) {
-    log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
-    return substr;
-  }
-
-  if (!firstLine && !commentEmbedOverrideFilepath) {
-    log({ returnSnippet: substr }, chalk.blue(`Code block is empty & no preceding embedme comment, skipping...`));
-    return substr;
-  }
-
   if (ignoreNext) {
     log({ returnSnippet: substr }, chalk.blue(`"Ignore next" comment detected, skipping code block...`));
     return substr;
   }
 
-  const supportedFileTypes: SupportedFileType[] = Object.values(SupportedFileType).filter(x => typeof x === 'string');
+  let commentedFilename: string | null;
+  if (commentEmbedOverrideFilepath) {
+    commentedFilename = commentEmbedOverrideFilepath;
+  } else {
+    if (!codeExtension) {
+      log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
+      return substr;
+    }
 
-  if (supportedFileTypes.indexOf(codeExtension) < 0) {
-    log(
-      { returnSnippet: substr },
-      chalk.yellow(
-        `Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
-          ', ',
-        )}, skipping code block`,
-      ),
-    );
-    return substr;
+    if (!firstLine) {
+      log({ returnSnippet: substr }, chalk.blue(`Code block is empty & no preceding embedme comment, skipping...`));
+      return substr;
+    }
+
+    const supportedFileTypes: SupportedFileType[] = Object.values(SupportedFileType).filter(x => typeof x === 'string');
+
+    if (supportedFileTypes.indexOf(codeExtension) < 0) {
+      log(
+        { returnSnippet: substr },
+        chalk.yellow(
+          `Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
+            ', ',
+          )}, skipping code block`,
+        ),
+      );
+      return substr;
+    }
+
+    const languageFamily: CommentFamily | null = lookupLanguageCommentFamily(codeExtension);
+
+    if (languageFamily == null) {
+      log(
+        { returnSnippet: substr },
+        chalk.red(
+          `File extension ${chalk.underline(
+            codeExtension,
+          )} marked as supported, but comment family could not be determined. Please report this issue.`,
+        ),
+      );
+      return substr;
+    }
+
+    commentedFilename = filetypeCommentReaders[languageFamily](firstLine);
   }
-
-  const languageFamily: CommentFamily | null = lookupLanguageCommentFamily(codeExtension);
-
-  if (languageFamily == null) {
-    log(
-      { returnSnippet: substr },
-      chalk.red(
-        `File extension ${chalk.underline(
-          codeExtension,
-        )} marked as supported, but comment family could not be determined. Please report this issue.`,
-      ),
-    );
-    return substr;
-  }
-
-  const commentedFilename = commentEmbedOverrideFilepath || filetypeCommentReaders[languageFamily](firstLine);
 
   if (!commentedFilename) {
     log(
@@ -245,7 +250,7 @@ function getReplacement(
   const matches = commentedFilename.match(/\s?(\S+?)((#L(\d+)-L(\d+))|$)/m);
 
   if (!matches) {
-    log({ returnSnippet: substr }, chalk.gray(`No file found in first comment block`));
+    log({ returnSnippet: substr }, chalk.gray(`No file found in embed line`));
     return substr;
   }
 
@@ -341,7 +346,7 @@ function getReplacement(
     return substr;
   }
 
-  const chalkColour = options.verify ? 'red' : 'green';
+  const chalkColour = options.verify ? 'yellow' : 'green';
 
   log(
     { returnSnippet: replacement },
@@ -378,7 +383,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
     const [codeFence, leadingSpaces] = result;
     const start = sourceText.substring(previousEnd, result.index);
 
-    const extensionMatch = codeFence.match(/```(\S*)/);
+    const extensionMatch = codeFence.match(/```(.*)/);
 
     const codeExtension = extensionMatch ? extensionMatch[1] : null;
     const splitFence = codeFence.split('\n');
