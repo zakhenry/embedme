@@ -257,7 +257,7 @@ puts 'Hello, world!'
 
 ```
 
-Ruby
+Crystal
 
 ```cr
 # sample.cr
@@ -413,10 +413,13 @@ export function hello(): string {
 
 ### Embed with comment and unknown file type
 
-<!-- embedme path/to/file.json -->
+<!-- embedme sample.json -->
 
-```{.json caption="Some JSON file"}
-{"key": true}
+```{.json
+{
+  "hello": "world"
+}
+
 ```
 
 ## Errors
