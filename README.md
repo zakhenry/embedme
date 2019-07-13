@@ -30,15 +30,16 @@ npx embedme README.md
 
 Et voilà! Your README.md file will be updated with the content of your source file:
 
+<!-- prettier-ignore -->
     This is a *markdown* document with a code block:
 
     ```ts
     // example.ts
-
+    
     export function helloWorld(name: string): string {
       return `Hello ${name}!, how are you today?`;
     }
-
+    
     ```
 
 As the comment is preserved, you can happily re-run `embedme` and it will run again but there will be no changes.
@@ -78,14 +79,14 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L44-L71
+// src/embedme.lib.ts#L44-L73
 
 enum SupportedFileType {
   PLAIN_TEXT = 'txt',
   TYPESCRIPT = 'ts',
   JAVASCRIPT = 'js',
   SCSS = 'scss',
-  RUST = 'rs',
+  RUST = 'rust',
   JAVA = 'java',
   CPP = 'cpp',
   C = 'c',
@@ -107,6 +108,8 @@ enum SupportedFileType {
   KOTLIN = 'kotlin',
   SCALA = 'scala',
   CRYSTAL = 'cr',
+  PLANT_UML = 'puml',
+  MERMAID = 'mermaid',
 }
 ```
 
