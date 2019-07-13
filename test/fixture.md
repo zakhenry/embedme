@@ -321,6 +321,34 @@ sequenceDiagram
 
 ```
 
+Protobuf
+
+```proto
+// sample.proto
+
+syntax = "proto3";
+
+enum Places {
+    WORLD = 0;
+}
+
+message Hello {
+    Places place = 1;
+}
+
+```
+
+CMake
+
+```cmake
+# sample.cmake
+
+cmake_minimum_required(VERSION 2.8.9)
+project (hello)
+add_executable(hello sample.cpp)
+
+```
+
 ## Extension-less selection
 
 ```sh

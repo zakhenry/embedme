@@ -79,7 +79,7 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L44-L73
+// src/embedme.lib.ts#L44-L75
 
 enum SupportedFileType {
   PLAIN_TEXT = 'txt',
@@ -110,6 +110,8 @@ enum SupportedFileType {
   CRYSTAL = 'cr',
   PLANT_UML = 'puml',
   MERMAID = 'mermaid',
+  CMAKE = 'cmake',
+  PROTOBUF = 'proto',
 }
 ```
 

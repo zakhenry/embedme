@@ -70,6 +70,8 @@ enum SupportedFileType {
   CRYSTAL = 'cr',
   PLANT_UML = 'puml',
   MERMAID = 'mermaid',
+  CMAKE = 'cmake',
+  PROTOBUF = 'proto',
 }
 
 enum CommentFamily {
@@ -100,6 +102,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.KOTLIN,
     SupportedFileType.SCALA,
     SupportedFileType.JSON_5,
+    SupportedFileType.PROTOBUF,
   ],
   [CommentFamily.XML]: [SupportedFileType.HTML, SupportedFileType.MARKDOWN, SupportedFileType.XML],
   [CommentFamily.HASH]: [
@@ -109,6 +112,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.YAML,
     SupportedFileType.RUBY,
     SupportedFileType.CRYSTAL,
+    SupportedFileType.CMAKE,
   ],
   [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
   [CommentFamily.DOUBLE_PERCENT]: [SupportedFileType.MERMAID],
