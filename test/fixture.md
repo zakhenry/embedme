@@ -411,6 +411,14 @@ export function hello(): string {
 }
 ```
 
+### Embed with comment and unknown file type
+
+<!-- embedme path/to/file.json -->
+
+```{.json caption="Some JSON file"}
+{"key": true}
+```
+
 ## Errors
 
 ### Empty block
