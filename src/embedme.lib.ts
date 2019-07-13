@@ -141,7 +141,7 @@ const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> =
     return match[1];
   },
   [CommentFamily.HASH]: leadingSymbol('#'),
-  [CommentFamily.SINGLE_QUOTE]: leadingSymbol('//'),
+  [CommentFamily.SINGLE_QUOTE]: leadingSymbol(`'`),
   [CommentFamily.DOUBLE_PERCENT]: leadingSymbol('%%'),
 };
 
