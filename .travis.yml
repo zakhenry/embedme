@@ -16,6 +16,7 @@ script:
   - yarn build
   # tests
   - yarn test
+  - yarn readme:check
 
 deploy:
   - provider: script
