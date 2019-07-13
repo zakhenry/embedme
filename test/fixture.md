@@ -415,7 +415,7 @@ export function hello(): string {
 
 <!-- embedme sample.json -->
 
-```{.json
+```{.json caption="Some JSON file"}
 {
   "hello": "world"
 }

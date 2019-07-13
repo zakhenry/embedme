@@ -194,15 +194,15 @@ function getReplacement(
     return substr;
   }
 
-  if (!codeExtension) {
-    log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
-    return substr;
-  }
-
   let commentedFilename: string | null;
   if (commentEmbedOverrideFilepath) {
     commentedFilename = commentEmbedOverrideFilepath;
   } else {
+    if (!codeExtension) {
+      log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
+      return substr;
+    }
+
     if (!firstLine) {
       log({ returnSnippet: substr }, chalk.blue(`Code block is empty & no preceding embedme comment, skipping...`));
       return substr;
@@ -346,7 +346,7 @@ function getReplacement(
     return substr;
   }
 
-  const chalkColour = options.verify ? 'red' : 'green';
+  const chalkColour = options.verify ? 'yellow' : 'green';
 
   log(
     { returnSnippet: replacement },
@@ -383,7 +383,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
     const [codeFence, leadingSpaces] = result;
     const start = sourceText.substring(previousEnd, result.index);
 
-    const extensionMatch = codeFence.match(/```(\S*)/);
+    const extensionMatch = codeFence.match(/```(.*)/);
 
     const codeExtension = extensionMatch ? extensionMatch[1] : null;
     const splitFence = codeFence.split('\n');
