@@ -69,6 +69,7 @@ enum SupportedFileType {
   SCALA = 'scala',
   CRYSTAL = 'cr',
   PLANT_UML = 'puml',
+  MERMAID = 'mermaid',
 }
 
 enum CommentFamily {
@@ -77,6 +78,7 @@ enum CommentFamily {
   XML,
   HASH,
   SINGLE_QUOTE,
+  DOUBLE_PERCENT,
 }
 
 const languageMap: Record<CommentFamily, SupportedFileType[]> = {
@@ -109,18 +111,23 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.CRYSTAL,
   ],
   [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
+  [CommentFamily.DOUBLE_PERCENT]: [SupportedFileType.MERMAID],
+};
+
+const leadingSymbol = (symbol: string): FilenameFromCommentReader => line => {
+  const regex = new RegExp(`${symbol}\\s?(\\S*?$)`);
+
+  const match = line.match(regex);
+  if (!match) {
+    return null;
+  }
+
+  return match[1];
 };
 
 const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> = {
   [CommentFamily.NONE]: _ => null,
-  [CommentFamily.C]: line => {
-    const match = line.match(/\/\/\s?(\S*?$)/m);
-    if (!match) {
-      return null;
-    }
-
-    return match[1];
-  },
+  [CommentFamily.C]: leadingSymbol('//'),
   [CommentFamily.XML]: line => {
     const match = line.match(/<!--\s*?(\S*?)\s*?-->/);
     if (!match) {
@@ -129,22 +136,9 @@ const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> =
 
     return match[1];
   },
-  [CommentFamily.HASH]: line => {
-    const match = line.match(/#\s*?(\S*?)$/);
-    if (!match) {
-      return null;
-    }
-
-    return match[1];
-  },
-  [CommentFamily.SINGLE_QUOTE]: line => {
-    const match = line.match(/'\s*?(\S*?)$/);
-    if (!match) {
-      return null;
-    }
-
-    return match[1];
-  },
+  [CommentFamily.HASH]: leadingSymbol('#'),
+  [CommentFamily.SINGLE_QUOTE]: leadingSymbol('//'),
+  [CommentFamily.DOUBLE_PERCENT]: leadingSymbol('%%'),
 };
 
 function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily | null {
