@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+enum Places {
+    WORLD = 0;
+}
+
+message Hello {
+    Places place = 1;
+}
