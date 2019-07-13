@@ -68,6 +68,7 @@ enum SupportedFileType {
   KOTLIN = 'kotlin',
   SCALA = 'scala',
   CRYSTAL = 'cr',
+  PLANT_UML = 'puml',
 }
 
 enum CommentFamily {
@@ -75,6 +76,7 @@ enum CommentFamily {
   C,
   XML,
   HASH,
+  SINGLE_QUOTE,
 }
 
 const languageMap: Record<CommentFamily, SupportedFileType[]> = {
@@ -106,6 +108,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.RUBY,
     SupportedFileType.CRYSTAL,
   ],
+  [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
 };
 
 const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> = {
@@ -128,6 +131,14 @@ const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> =
   },
   [CommentFamily.HASH]: line => {
     const match = line.match(/#\s*?(\S*?)$/);
+    if (!match) {
+      return null;
+    }
+
+    return match[1];
+  },
+  [CommentFamily.SINGLE_QUOTE]: line => {
+    const match = line.match(/'\s*?(\S*?)$/);
     if (!match) {
       return null;
     }

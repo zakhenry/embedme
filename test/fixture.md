@@ -290,6 +290,20 @@ object HelloWorld {
 
 ```
 
+Plant UML
+
+```puml
+' sample.puml
+
+@startuml
+Bob -> Alice : hello
+activate Alice
+Alice -> Alice : some action
+return bye
+@enduml
+
+```
+
 ## Extension-less selection
 
 ```sh
