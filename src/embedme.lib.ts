@@ -410,7 +410,9 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
         return getLineNumber(sourceText.substring(0, result.index), result.index, lineEnding);
       }
       const startingLineNumber = docPartials.join('').split(lineEnding).length - 1;
-      return startingLineNumber + getLineNumber(sourceText.substring(previousEnd, result.index), result.index, lineEnding);
+      return (
+        startingLineNumber + getLineNumber(sourceText.substring(previousEnd, result.index), result.index, lineEnding)
+      );
     })();
 
     const commentInsertion = start.match(/<!--\s*?embedme[ ]+?(\S+?)\s*?-->/);
