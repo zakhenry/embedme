@@ -170,6 +170,7 @@ function getReplacement(
   logMethod: ReturnType<typeof logBuilder>,
   substr: string,
   leadingSpaces: string,
+  lineEnding: string,
   codeExtension: SupportedFileType,
   firstLine: string,
   startLineNumber: number,
@@ -182,7 +183,7 @@ function getReplacement(
    * embed is going to be.
    */
   const log = ({ returnSnippet }: { returnSnippet: string }, ...messages: string[]) => {
-    const endLineNumber = returnSnippet.split('\n').length + startLineNumber - 1;
+    const endLineNumber = returnSnippet.split(lineEnding).length + startLineNumber - 1;
 
     const logPrefix = chalk.gray(`   ${relative(process.cwd(), inputFilePath)}#L${startLineNumber}-L${endLineNumber}`);
 
@@ -285,7 +286,7 @@ function getReplacement(
 
   const file = readFileSync(relativePath, 'utf8');
 
-  let lines = file.split('\n');
+  let lines = file.split(lineEnding);
   if (lineNumbering) {
     lines = lines.slice(+startLine - 1, +endLine);
   }
@@ -310,7 +311,7 @@ function getReplacement(
 
   lines = lines.map(line => line.slice(minimumLeadingSpaces));
 
-  const outputCode = lines.join('\n');
+  const outputCode = lines.join(lineEnding);
 
   if (/```/.test(outputCode)) {
     log(
@@ -326,14 +327,14 @@ function getReplacement(
 
   let replacement =
     !!commentEmbedOverrideFilepath || options.stripEmbedComment
-      ? `\`\`\`${codeExtension}\n${outputCode}\n\`\`\``
-      : `\`\`\`${codeExtension}\n${firstLine.trim()}\n\n${outputCode}\n\`\`\``;
+      ? `\`\`\`${codeExtension}${lineEnding}${outputCode}${lineEnding}\`\`\``
+      : `\`\`\`${codeExtension}${lineEnding}${firstLine.trim()}${lineEnding}${lineEnding}${outputCode}${lineEnding}\`\`\``;
 
   if (leadingSpaces.length) {
     replacement = replacement
-      .split('\n')
+      .split(lineEnding)
       .map(line => leadingSpaces + line)
-      .join('\n');
+      .join(lineEnding);
   }
 
   if (replacement === substr) {
@@ -360,8 +361,14 @@ function getReplacement(
   return replacement;
 }
 
-function getLineNumber(text: string, index: number): number {
-  return text.substring(0, index).split('\n').length;
+function getLineNumber(text: string, index: number, lineEnding: string): number {
+  return text.substring(0, index).split(lineEnding).length;
+}
+
+function detectLineEnding(sourceText: string): string {
+  let rexp = new RegExp(/\r\n/);
+
+  return rexp.test(sourceText) ? '\r\n' : '\n';
 }
 
 export function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): string {
@@ -373,6 +380,11 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
    * Match a codefence, capture groups around the file extension (optional) and first line starting with // (optional)
    */
   const codeFenceFinder: RegExp = /([ \t]*?)```([\s\S]*?)^[ \t]*?```/gm;
+
+  /*
+   * Detects line ending to use based on whether or not CRLF is detected in the source text.
+   */
+  const lineEnding = detectLineEnding(sourceText);
 
   const docPartials = [];
 
@@ -386,7 +398,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
     const extensionMatch = codeFence.match(/```(.*)/);
 
     const codeExtension = extensionMatch ? extensionMatch[1] : null;
-    const splitFence = codeFence.split('\n');
+    const splitFence = codeFence.split(lineEnding);
     const firstLine = splitFence.length >= 3 ? splitFence[1] : null;
 
     /**
@@ -395,10 +407,12 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
      */
     const startLineNumber = (() => {
       if (options.dryRun || options.stdout || options.verify) {
-        return getLineNumber(sourceText.substring(0, result.index), result.index);
+        return getLineNumber(sourceText.substring(0, result.index), result.index, lineEnding);
       }
-      const startingLineNumber = docPartials.join('').split('\n').length - 1;
-      return startingLineNumber + getLineNumber(sourceText.substring(previousEnd, result.index), result.index);
+      const startingLineNumber = docPartials.join('').split(lineEnding).length - 1;
+      return (
+        startingLineNumber + getLineNumber(sourceText.substring(previousEnd, result.index), result.index, lineEnding)
+      );
     })();
 
     const commentInsertion = start.match(/<!--\s*?embedme[ ]+?(\S+?)\s*?-->/);
@@ -409,6 +423,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
       log,
       codeFence,
       leadingSpaces,
+      lineEnding,
       codeExtension as SupportedFileType,
       firstLine || '',
       startLineNumber,
