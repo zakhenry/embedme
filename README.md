@@ -150,11 +150,22 @@ Will result in the following output
 If you want to run `embedme` over multiple files, you can use glob matching, i.e.
 
 ```bash
-embedme src/**/*.md
+embedme "src/**/*.md"
 ```
 
-Note that this globbing is shell expansion, not internally handled so _don't_ quote the glob expression. You can test
-you output with `ls`, i.e. `ls src/**/*.md`
+Note embedme supports both quoted globbing and unquoted. Be careful using unquoted
+globbing as this can lead to behaviour that is not portable between different
+operating systems.
+
+If you're using Windows, you must use forward slashes (`/`) to denote path separators.
+
+You can also pass multiple separate glob patterns to match multiple sets of files
+
+example:
+
+```bash
+embedme "src/**/*.md" "docs/**/*.markdown"
+```
 
 ### CI Checks
 
