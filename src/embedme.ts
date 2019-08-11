@@ -6,6 +6,7 @@ import { embedme, EmbedmeOptions, logBuilder } from './embedme.lib';
 import { compile } from 'gitignore-parser';
 import program from 'commander';
 import chalk from 'chalk';
+import glob from 'glob';
 const pkg = require('../package.json');
 
 program
@@ -22,11 +23,21 @@ program
   .option('--strip-embed-comment', `Remove the comments from the code fence. *Must* be run with --stdout flag`)
   .parse(process.argv);
 
-let { args: sourceFiles } = program;
+const { args: sourceFilesInput } = program;
 
 const options: EmbedmeOptions = (program as unknown) as EmbedmeOptions;
 
 const log = logBuilder(options);
+
+let sourceFiles = sourceFilesInput.reduce<string[]>((files, file) => {
+  if (glob.hasMagic(file)) {
+    files.push(...glob.sync(file));
+  } else {
+    files.push(file);
+  }
+
+  return files;
+}, []);
 
 if (sourceFiles.length > 1) {
   log(chalk.yellow(`More than one file matched your input, results will be concatenated in stdout`));
