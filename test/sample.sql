@@ -1,0 +1,3 @@
+SELECT * 
+FROM tableUsers
+WHERE 1=1

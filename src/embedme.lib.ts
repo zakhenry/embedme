@@ -72,6 +72,7 @@ enum SupportedFileType {
   MERMAID = 'mermaid',
   CMAKE = 'cmake',
   PROTOBUF = 'proto',
+  SQL = 'sql',
 }
 
 enum CommentFamily {
@@ -81,6 +82,7 @@ enum CommentFamily {
   HASH,
   SINGLE_QUOTE,
   DOUBLE_PERCENT,
+  DOUBLE_HYPHENS,
 }
 
 const languageMap: Record<CommentFamily, SupportedFileType[]> = {
@@ -116,6 +118,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
   ],
   [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
   [CommentFamily.DOUBLE_PERCENT]: [SupportedFileType.MERMAID],
+  [CommentFamily.DOUBLE_HYPHENS]: [SupportedFileType.SQL],
 };
 
 const leadingSymbol = (symbol: string): FilenameFromCommentReader => line => {
@@ -143,6 +146,7 @@ const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> =
   [CommentFamily.HASH]: leadingSymbol('#'),
   [CommentFamily.SINGLE_QUOTE]: leadingSymbol(`'`),
   [CommentFamily.DOUBLE_PERCENT]: leadingSymbol('%%'),
+  [CommentFamily.DOUBLE_HYPHENS]: leadingSymbol('--'),
 };
 
 function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily | null {
