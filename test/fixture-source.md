@@ -177,6 +177,12 @@ CMake
 # sample.cmake
 ```
 
+SQL Script
+
+```sql
+-- sample.sql
+```
+
 ## Extension-less selection
 
 ```sh

@@ -349,6 +349,16 @@ add_executable(hello sample.cpp)
 
 ```
 
+SQL Script
+
+```sql
+-- sample.sql
+
+SELECT *
+FROM tableUsers
+WHERE 1=1
+```
+
 ## Extension-less selection
 
 ```sh
