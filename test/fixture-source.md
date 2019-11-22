@@ -183,6 +183,12 @@ SQL Script
 -- sample.sql
 ```
 
+Haskell
+
+```hs
+-- sample.hs
+```
+
 ## Extension-less selection
 
 ```sh
