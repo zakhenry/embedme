@@ -73,6 +73,7 @@ enum SupportedFileType {
   CMAKE = 'cmake',
   PROTOBUF = 'proto',
   SQL = 'sql',
+  HASKELL = 'hs',
 }
 
 enum CommentFamily {
@@ -118,7 +119,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
   ],
   [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
   [CommentFamily.DOUBLE_PERCENT]: [SupportedFileType.MERMAID],
-  [CommentFamily.DOUBLE_HYPHENS]: [SupportedFileType.SQL],
+  [CommentFamily.DOUBLE_HYPHENS]: [SupportedFileType.SQL, SupportedFileType.HASKELL],
 };
 
 const leadingSymbol = (symbol: string): FilenameFromCommentReader => line => {

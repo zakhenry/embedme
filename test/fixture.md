@@ -359,6 +359,15 @@ FROM tableUsers
 WHERE 1=1
 ```
 
+Haskell
+
+```hs
+-- sample.hs
+
+main = putStrLn "Hello, world!"
+
+```
+
 ## Extension-less selection
 
 ```sh
