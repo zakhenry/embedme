@@ -158,7 +158,7 @@ function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily
 
 export const logBuilder = (options: EmbedmeOptions) => (...messages: string[]) => {
   if (!options.silent) {
-    if (options.stdout) {
+    if (options.stdout || (!options.stdout && options.stripEmbedComment)) {
       // as we're putting the resulting file out of stdout, we redirect the logs to stderr so they can still be seen,
       // but won't be piped
       console.error(...messages);

@@ -47,12 +47,16 @@ if (sourceFiles.length > 1) {
 }
 
 if (options.stripEmbedComment) {
-  log(
-    chalk.red(
-      `If you use the --strip-embed-comment flag, you must use the --stdout flag and redirect the result to your destination file, otherwise your source file(s) will be rewritten and comment source is lost.`,
-    ),
-  );
-  process.exit(1);
+  if (!options.stdout) {
+    log(
+      chalk.red(
+        `If you use the --strip-embed-comment flag, you must use the --stdout flag and redirect the result to your destination file, otherwise your source file(s) will be rewritten and comment source is lost.`,
+      ),
+    );
+    process.exit(1);
+  } else {
+    log(chalk.yellow(`--strip-embed-comment flag detected. Comment source will NOT be saved in destination file.`));
+  }
 }
 
 if (options.verify) {
