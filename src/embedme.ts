@@ -28,6 +28,7 @@ const { args: sourceFilesInput } = program;
 const options: EmbedmeOptions = (program as unknown) as EmbedmeOptions;
 
 const log = logBuilder(options);
+const errorLog = logBuilder(options, true);
 
 let sourceFiles = sourceFilesInput.reduce<string[]>((files, file) => {
   if (glob.hasMagic(file)) {
@@ -46,8 +47,8 @@ if (sourceFiles.length > 1) {
   process.exit(0);
 }
 
-if (options.stripEmbedComment) {
-  log(
+if (options.stripEmbedComment && !options.stdout) {
+  errorLog(
     chalk.red(
       `If you use the --strip-embed-comment flag, you must use the --stdout flag and redirect the result to your destination file, otherwise your source file(s) will be rewritten and comment source is lost.`,
     ),
@@ -90,7 +91,7 @@ sourceFiles.forEach((source, i) => {
   const resolvedPath = resolve(source);
 
   if (!existsSync(source)) {
-    log(chalk.red(`  File ${chalk.underline(relative(process.cwd(), resolvedPath))} does not exist.`));
+    errorLog(chalk.red(`  File ${chalk.underline(relative(process.cwd(), resolvedPath))} does not exist.`));
     process.exit(1);
     return;
   }
@@ -101,7 +102,7 @@ sourceFiles.forEach((source, i) => {
 
   if (options.verify) {
     if (sourceText !== outText) {
-      log(chalk.red(`Diff detected, exiting 1`));
+      errorLog(chalk.red(`Diff detected, exiting 1`));
       process.exit(1);
     }
   } else if (options.stdout) {

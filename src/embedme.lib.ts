@@ -156,9 +156,9 @@ function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily
     .find((commentFamily: CommentFamily) => languageMap[commentFamily].includes(fileType));
 }
 
-export const logBuilder = (options: EmbedmeOptions) => (...messages: string[]) => {
+export const logBuilder = (options: EmbedmeOptions, errorLog = false) => (...messages: string[]) => {
   if (!options.silent) {
-    if (options.stdout) {
+    if (errorLog || options.stdout) {
       // as we're putting the resulting file out of stdout, we redirect the logs to stderr so they can still be seen,
       // but won't be piped
       console.error(...messages);
@@ -357,9 +357,9 @@ function getReplacement(
   log(
     { returnSnippet: replacement },
     chalk[chalkColour](
-      `Embedded ${chalk[(chalkColour + 'Bright') as 'greenBright'](
-        lines.length + ' lines',
-      )} from file ${chalk.underline(commentedFilename)}`,
+      `Embedded ${chalk[(chalkColour + 'Bright') as 'greenBright'](lines.length + ' lines')}${
+        options.stripEmbedComment ? chalk.italic(' without comment line') : ''
+      } from file ${chalk.underline(commentedFilename)}`,
     ),
   );
 
