@@ -5,6 +5,10 @@ import * as util from 'util';
 
 const execAsync = util.promisify(exec);
 
+function stripCwd(str: string): string {
+  return str.replace(new RegExp(process.cwd(), 'g'), '${cwd}');
+}
+
 // @see https://github.com/tj/commander.js/issues/561
 test.failing('it aborts on unrecognised flags', async t => {
   await t.throwsAsync(() => execAsync(`node dist/embedme.js test/fixtures/fixture.md --this-is-not-a-valid-flag`));
@@ -42,9 +46,9 @@ test('it edits the file in place, embedding code snippets', async t => {
   // these assertions are expected to fail when output or supported files changes.
   // run yarn test:update to update the snapshots. This is useful in code reviews
   // to interpret what has changed in output.
-  t.snapshot(after, 'File content matches');
-  t.snapshot(stdout, 'stdout matches');
-  t.snapshot(stderr, 'stderr matches');
+  t.snapshot(after, 'File content does not match');
+  t.snapshot(stripCwd(stdout), 'stdout does not match');
+  t.snapshot(stderr, 'stderr does not match');
 });
 
 test('it does not change source file with --dry-run', async t => {
