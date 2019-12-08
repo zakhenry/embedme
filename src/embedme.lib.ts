@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk, { Chalk } from 'chalk';
 import { existsSync, readFileSync } from 'fs';
 import { relative, resolve } from 'path';
 
@@ -156,14 +156,18 @@ function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily
     .find((commentFamily: CommentFamily) => languageMap[commentFamily].includes(fileType));
 }
 
-export const logBuilder = (options: EmbedmeOptions) => (...messages: string[]) => {
+// this somewhat convoluted type to generate logs is due to the requirement to be able to log colours to both stdout,
+// and stderr, so the appropriate chalk instance has to be injected.
+type LogConstructor = (chalk: Chalk) => string;
+
+export const logBuilder = (options: EmbedmeOptions, errorLog = false) => (logConstructor: LogConstructor) => {
   if (!options.silent) {
-    if (options.stdout) {
+    if (errorLog || options.stdout) {
       // as we're putting the resulting file out of stdout, we redirect the logs to stderr so they can still be seen,
       // but won't be piped
-      console.error(...messages);
+      console.error(logConstructor(chalk.stderr));
     } else {
-      console.log(...messages);
+      console.log(logConstructor(chalk));
     }
   }
 };
@@ -187,16 +191,19 @@ function getReplacement(
    * Note that we couldn't have derived the line count in the parent regex matcher, as we don't yet know how long the
    * embed is going to be.
    */
-  const log = ({ returnSnippet }: { returnSnippet: string }, ...messages: string[]) => {
+  const log = ({ returnSnippet }: { returnSnippet: string }, logConstructor: LogConstructor) => {
     const endLineNumber = returnSnippet.split(lineEnding).length + startLineNumber - 1;
 
-    const logPrefix = chalk.gray(`   ${relative(process.cwd(), inputFilePath)}#L${startLineNumber}-L${endLineNumber}`);
-
-    logMethod(logPrefix, ...messages);
+    logMethod(chalk => {
+      const logPrefix = chalk.gray(
+        `   ${relative(process.cwd(), inputFilePath)}#L${startLineNumber}-L${endLineNumber}`,
+      );
+      return logPrefix + ' ' + logConstructor(chalk);
+    });
   };
 
   if (ignoreNext) {
-    log({ returnSnippet: substr }, chalk.blue(`"Ignore next" comment detected, skipping code block...`));
+    log({ returnSnippet: substr }, chalk => chalk.blue(`"Ignore next" comment detected, skipping code block...`));
     return substr;
   }
 
@@ -205,20 +212,21 @@ function getReplacement(
     commentedFilename = commentEmbedOverrideFilepath;
   } else {
     if (!codeExtension) {
-      log({ returnSnippet: substr }, chalk.blue(`No code extension detected, skipping code block...`));
+      log({ returnSnippet: substr }, chalk => chalk.blue(`No code extension detected, skipping code block...`));
       return substr;
     }
 
     if (!firstLine) {
-      log({ returnSnippet: substr }, chalk.blue(`Code block is empty & no preceding embedme comment, skipping...`));
+      log({ returnSnippet: substr }, chalk =>
+        chalk.blue(`Code block is empty & no preceding embedme comment, skipping...`),
+      );
       return substr;
     }
 
     const supportedFileTypes: SupportedFileType[] = Object.values(SupportedFileType).filter(x => typeof x === 'string');
 
     if (supportedFileTypes.indexOf(codeExtension) < 0) {
-      log(
-        { returnSnippet: substr },
+      log({ returnSnippet: substr }, chalk =>
         chalk.yellow(
           `Unsupported file extension [${codeExtension}], supported extensions are ${supportedFileTypes.join(
             ', ',
@@ -231,8 +239,7 @@ function getReplacement(
     const languageFamily: CommentFamily | null = lookupLanguageCommentFamily(codeExtension);
 
     if (languageFamily == null) {
-      log(
-        { returnSnippet: substr },
+      log({ returnSnippet: substr }, chalk =>
         chalk.red(
           `File extension ${chalk.underline(
             codeExtension,
@@ -246,8 +253,7 @@ function getReplacement(
   }
 
   if (!commentedFilename) {
-    log(
-      { returnSnippet: substr },
+    log({ returnSnippet: substr }, chalk =>
       chalk.gray(`No comment detected in first line for block with extension ${codeExtension}`),
     );
     return substr;
@@ -256,14 +262,13 @@ function getReplacement(
   const matches = commentedFilename.match(/\s?(\S+?)((#L(\d+)-L(\d+))|$)/m);
 
   if (!matches) {
-    log({ returnSnippet: substr }, chalk.gray(`No file found in embed line`));
+    log({ returnSnippet: substr }, chalk => chalk.gray(`No file found in embed line`));
     return substr;
   }
 
   const [, filename, , lineNumbering, startLine, endLine] = matches;
   if (filename.includes('#')) {
-    log(
-      { returnSnippet: substr },
+    log({ returnSnippet: substr }, chalk =>
       chalk.red(
         `Incorrectly formatted line numbering string ${chalk.underline(
           filename,
@@ -278,8 +283,7 @@ function getReplacement(
     : resolve(inputFilePath, '..', filename);
 
   if (!existsSync(relativePath)) {
-    log(
-      { returnSnippet: substr },
+    log({ returnSnippet: substr }, chalk =>
       chalk.red(
         `Found filename ${chalk.underline(
           filename,
@@ -319,8 +323,7 @@ function getReplacement(
   const outputCode = lines.join(lineEnding);
 
   if (/```/.test(outputCode)) {
-    log(
-      { returnSnippet: substr },
+    log({ returnSnippet: substr }, chalk =>
       chalk.red(
         `Output snippet for file ${chalk.underline(
           filename,
@@ -343,23 +346,22 @@ function getReplacement(
   }
 
   if (replacement === substr) {
-    log({ returnSnippet: substr }, chalk.gray(`No changes required, already up to date`));
+    log({ returnSnippet: substr }, chalk => chalk.gray(`No changes required, already up to date`));
     return substr;
   }
 
   if (replacement.slice(0, -3).trimRight() === substr.slice(0, -3).trimRight()) {
-    log({ returnSnippet: substr }, chalk.gray(`Changes are trailing whitespace only, ignoring`));
+    log({ returnSnippet: substr }, chalk => chalk.gray(`Changes are trailing whitespace only, ignoring`));
     return substr;
   }
 
   const chalkColour = options.verify ? 'yellow' : 'green';
 
-  log(
-    { returnSnippet: replacement },
+  log({ returnSnippet: replacement }, chalk =>
     chalk[chalkColour](
-      `Embedded ${chalk[(chalkColour + 'Bright') as 'greenBright'](
-        lines.length + ' lines',
-      )} from file ${chalk.underline(commentedFilename)}`,
+      `Embedded ${chalk[(chalkColour + 'Bright') as 'greenBright'](lines.length + ' lines')}${
+        options.stripEmbedComment ? chalk.italic(' without comment line') : ''
+      } from file ${chalk.underline(commentedFilename)}`,
     ),
   );
 
@@ -379,7 +381,7 @@ function detectLineEnding(sourceText: string): string {
 export function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): string {
   const log = logBuilder(options);
 
-  log(chalk.magenta(`  Analysing ${chalk.underline(relative(process.cwd(), inputFilePath))}...`));
+  log(chalk => chalk.magenta(`  Analysing ${chalk.underline(relative(process.cwd(), inputFilePath))}...`));
 
   /**
    * Match a codefence, capture groups around the file extension (optional) and first line starting with // (optional)

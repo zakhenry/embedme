@@ -3,7 +3,7 @@
 Plain Text
 
 ```txt
-// sample.txt
+// snippets/sample.txt
 
 This file is unformatted plain text
 
@@ -12,33 +12,36 @@ This file is unformatted plain text
 Typescript
 
 ```ts
-// sample.ts
+// snippets/sample.ts
 
 export function hello(): string {
   return 'Hello World';
 }
+
 ```
 
 Javascript
 
 ```js
-// sample.js
+// snippets/sample.js
 
 console.log('Hello World');
+
 ```
 
 HTML
 
 ```html
-<!-- sample.html -->
+<!-- snippets/sample.html -->
 
 <h1>Hello world</h1>
+
 ```
 
 Python
 
 ```py
-# sample.py
+# snippets/sample.py
 
 print('Hello World')
 
@@ -47,7 +50,7 @@ print('Hello World')
 Rust
 
 ```rust
-// sample.rs
+// snippets/sample.rs
 
 fn main() {
     println!("Hello World!");
@@ -58,7 +61,7 @@ fn main() {
 C++
 
 ```cpp
-// sample.cpp
+// snippets/sample.cpp
 
 #include <iostream>
 using namespace std;
@@ -74,7 +77,7 @@ int main()
 C
 
 ```c
-// sample.c
+// snippets/sample.c
 
 #include <stdio.h>
 int main()
@@ -89,7 +92,7 @@ int main()
 Java
 
 ```java
-// sample.java
+// snippets/sample.java
 
 public class HelloWorld {
 
@@ -105,7 +108,7 @@ public class HelloWorld {
 Golang
 
 ```go
-// sample.go
+// snippets/sample.go
 
 package main
 
@@ -120,7 +123,7 @@ func main() {
 Bash
 
 ```sh
-# sample.sh
+# snippets/sample.sh
 
 #!/usr/bin/env bash
 print Hello World
@@ -130,7 +133,7 @@ print Hello World
 Shell
 
 ```sh
-# sample.sh
+# snippets/sample.sh
 
 #!/usr/bin/env bash
 print Hello World
@@ -140,7 +143,7 @@ print Hello World
 Objective C
 
 ```objectivec
-// sample.m
+// snippets/sample.m
 
 #import <Foundation/Foundation.h>
 
@@ -156,19 +159,20 @@ int main(int argc, const char * argv[]) {
 SCSS
 
 ```scss
-// sample.scss
+// snippets/sample.scss
 
 .hello {
   .world {
     border: 1px solid red;
   }
 }
+
 ```
 
 PHP
 
 ```php
-// sample.php
+// snippets/sample.php
 
 <?php
 	echo 'Hello, World!';
@@ -179,7 +183,7 @@ PHP
 C#
 
 ```cs
-// sample.cs
+// snippets/sample.cs
 
 using System;
 namespace HelloWorld
@@ -202,7 +206,7 @@ namespace HelloWorld
 Swift
 
 ```swift
-// sample.swift
+// snippets/sample.swift
 
 print("Hello, world!")
 
@@ -211,7 +215,7 @@ print("Hello, world!")
 XML
 
 ```xml
-<!-- sample.xml -->
+<!-- snippets/sample.xml -->
 
 <hello>
     <world>true</world>
@@ -222,36 +226,39 @@ XML
 Yaml
 
 ```yaml
-# sample.yaml
+# snippets/sample.yaml
 
 hello:
   - world
+
 ```
 
 JSON
 
-<!-- embedme sample.json -->
+<!-- embedme snippets/sample.json -->
 
 ```json
 {
   "hello": "world"
 }
+
 ```
 
 JSON5
 
 ```json5
-// sample.json5
+// snippets/sample.json5
 
 {
   hello: 'world',
 }
+
 ```
 
 Ruby
 
 ```rb
-# sample.rb
+# snippets/sample.rb
 
 puts 'Hello, world!'
 
@@ -260,7 +267,7 @@ puts 'Hello, world!'
 Crystal
 
 ```cr
-# sample.cr
+# snippets/sample.cr
 
 puts 'Hello, world!'
 
@@ -269,7 +276,7 @@ puts 'Hello, world!'
 Kotlin
 
 ```kotlin
-// sample.kt
+// snippets/sample.kt
 
 fun main(args: Array<String>) {
     println("Hello World!")
@@ -280,7 +287,7 @@ fun main(args: Array<String>) {
 Scala
 
 ```scala
-// sample.scala
+// snippets/sample.scala
 
 object HelloWorld {
   def main(args: Array[String]): Unit = {
@@ -293,7 +300,7 @@ object HelloWorld {
 Plant UML
 
 ```puml
-' sample.puml
+' snippets/sample.puml
 
 @startuml
 Bob -> Alice : hello
@@ -307,7 +314,7 @@ return bye
 Mermaid
 
 ```mermaid
-%% sample.mermaid
+%% snippets/sample.mermaid
 
 sequenceDiagram
     Alice ->> Bob: Hello Bob, how are you?
@@ -324,7 +331,7 @@ sequenceDiagram
 Protobuf
 
 ```proto
-// sample.proto
+// snippets/sample.proto
 
 syntax = "proto3";
 
@@ -341,7 +348,7 @@ message Hello {
 CMake
 
 ```cmake
-# sample.cmake
+# snippets/sample.cmake
 
 cmake_minimum_required(VERSION 2.8.9)
 project (hello)
@@ -352,9 +359,9 @@ add_executable(hello sample.cpp)
 SQL Script
 
 ```sql
--- sample.sql
+-- snippets/sample.sql
 
-SELECT *
+SELECT * 
 FROM tableUsers
 WHERE 1=1
 ```
@@ -362,7 +369,7 @@ WHERE 1=1
 Haskell
 
 ```hs
--- sample.hs
+-- snippets/sample.hs
 
 main = putStrLn "Hello, world!"
 
@@ -371,7 +378,7 @@ main = putStrLn "Hello, world!"
 ## Extension-less selection
 
 ```sh
-# sample
+# snippets/sample
 
 #!/usr/bin/env bash
 print Hello World
@@ -381,7 +388,7 @@ print Hello World
 ## Line selection
 
 ```cs
-// sample.cs#L6-L13
+// snippets/sample.cs#L6-L13
 
 static void Main()
 {
@@ -396,12 +403,12 @@ static void Main()
 ## Indented selection
 
     ```ts
-    // sample.ts
-
+    // snippets/sample.ts
+    
     export function hello(): string {
       return 'Hello World';
     }
-
+    
     ```
 
 ## Embedme Ignore
@@ -409,7 +416,7 @@ static void Main()
 <!-- embedme-ignore-next -->
 
 ```ts
-// sample.ts
+// snippets/sample.ts
 ```
 
 ## Embedme Ignore alt syntax
@@ -417,22 +424,23 @@ static void Main()
 <!-- embedme ignore-next -->
 
 ```ts
-// sample.ts
+// snippets/sample.ts
 ```
 
 ## Embed with comment
 
-<!-- embedme sample.ts -->
+<!-- embedme snippets/sample.ts -->
 
 ```ts
 export function hello(): string {
   return 'Hello World';
 }
+
 ```
 
 ### Embed with comment and unknown file type
 
-<!-- embedme sample.json -->
+<!-- embedme snippets/sample.json -->
 
 ```{.json caption="Some JSON file"}
 {
@@ -497,7 +505,7 @@ Ignored block
 ### malformed line numbering
 
 ```ts
-// sample.ts#L1-2
+// snippets/sample.ts#L1-2
 ```
 
 ### missing comment on language embed with no comment support

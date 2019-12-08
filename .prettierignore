@@ -2,3 +2,5 @@ package.json
 dist
 node_modules
 .history
+test/fixtures
+test/snapshots
