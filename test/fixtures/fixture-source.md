@@ -3,121 +3,121 @@
 Plain Text
 
 ```txt
-// sample.txt
+// snippets/sample.txt
 ```
 
 Typescript
 
 ```ts
-// sample.ts
+// snippets/sample.ts
 ```
 
 Javascript
 
 ```js
-// sample.js
+// snippets/sample.js
 ```
 
 HTML
 
 ```html
-<!-- sample.html -->
+<!-- snippets/sample.html -->
 ```
 
 Python
 
 ```py
-# sample.py
+# snippets/sample.py
 ```
 
 Rust
 
 ```rust
-// sample.rs
+// snippets/sample.rs
 
 ```
 
 C++
 
 ```cpp
-// sample.cpp
+// snippets/sample.cpp
 ```
 
 C
 
 ```c
-// sample.c
+// snippets/sample.c
 ```
 
 Java
 
 ```java
-// sample.java
+// snippets/sample.java
 ```
 
 Golang
 
 ```go
-// sample.go
+// snippets/sample.go
 ```
 
 Bash
 
 ```sh
-# sample.sh
+# snippets/sample.sh
 ```
 
 Shell
 
 ```sh
-# sample.sh
+# snippets/sample.sh
 ```
 
 Objective C
 
 ```objectivec
-// sample.m
+// snippets/sample.m
 ```
 
 SCSS
 
 ```scss
-// sample.scss
+// snippets/sample.scss
 ```
 
 PHP
 
 ```php
-// sample.php
+// snippets/sample.php
 ```
 
 C#
 
 ```cs
-// sample.cs
+// snippets/sample.cs
 ```
 
 Swift
 
 ```swift
-// sample.swift
+// snippets/sample.swift
 ```
 
 XML
 
 ```xml
-<!-- sample.xml -->
+<!-- snippets/sample.xml -->
 ```
 
 Yaml
 
 ```yaml
-# sample.yaml
+# snippets/sample.yaml
 ```
 
 JSON
 
-<!-- embedme sample.json -->
+<!-- embedme snippets/sample.json -->
 
 ```json
 
@@ -126,85 +126,85 @@ JSON
 JSON5
 
 ```json5
-// sample.json5
+// snippets/sample.json5
 ```
 
 Ruby
 
 ```rb
-# sample.rb
+# snippets/sample.rb
 ```
 
 Crystal
 
 ```cr
-# sample.cr
+# snippets/sample.cr
 ```
 
 Kotlin
 
 ```kotlin
-// sample.kt
+// snippets/sample.kt
 ```
 
 Scala
 
 ```scala
-// sample.scala
+// snippets/sample.scala
 ```
 
 Plant UML
 
 ```puml
-' sample.puml
+' snippets/sample.puml
 ```
 
 Mermaid
 
 ```mermaid
-%% sample.mermaid
+%% snippets/sample.mermaid
 ```
 
 Protobuf
 
 ```proto
-// sample.proto
+// snippets/sample.proto
 ```
 
 CMake
 
 ```cmake
-# sample.cmake
+# snippets/sample.cmake
 ```
 
 SQL Script
 
 ```sql
--- sample.sql
+-- snippets/sample.sql
 ```
 
 Haskell
 
 ```hs
--- sample.hs
+-- snippets/sample.hs
 ```
 
 ## Extension-less selection
 
 ```sh
-# sample
+# snippets/sample
 ```
 
 ## Line selection
 
 ```cs
-// sample.cs#L6-L13
+// snippets/sample.cs#L6-L13
 ```
 
 ## Indented selection
 
     ```ts
-    // sample.ts
+    // snippets/sample.ts
     ```
 
 ## Embedme Ignore
@@ -212,7 +212,7 @@ Haskell
 <!-- embedme-ignore-next -->
 
 ```ts
-// sample.ts
+// snippets/sample.ts
 ```
 
 ## Embedme Ignore alt syntax
@@ -220,19 +220,19 @@ Haskell
 <!-- embedme ignore-next -->
 
 ```ts
-// sample.ts
+// snippets/sample.ts
 ```
 
 ## Embed with comment
 
-<!-- embedme sample.ts -->
+<!-- embedme snippets/sample.ts -->
 
 ```ts
 ```
 
 ### Embed with comment and unknown file type
 
-<!-- embedme sample.json -->
+<!-- embedme snippets/sample.json -->
 
 ```{.json caption="Some JSON file"}
 
@@ -294,7 +294,7 @@ Ignored block
 ### malformed line numbering
 
 ```ts
-// sample.ts#L1-2
+// snippets/sample.ts#L1-2
 ```
 
 ### missing comment on language embed with no comment support
