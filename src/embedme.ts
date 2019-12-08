@@ -5,7 +5,6 @@ import { relative, resolve } from 'path';
 import { embedme, EmbedmeOptions, logBuilder } from './embedme.lib';
 import { compile } from 'gitignore-parser';
 import program from 'commander';
-import chalk from 'chalk';
 import glob from 'glob';
 const pkg = require('../package.json');
 
@@ -41,14 +40,14 @@ let sourceFiles = sourceFilesInput.reduce<string[]>((files, file) => {
 }, []);
 
 if (sourceFiles.length > 1) {
-  log(chalk.yellow(`More than one file matched your input, results will be concatenated in stdout`));
+  log(chalk => chalk.yellow(`More than one file matched your input, results will be concatenated in stdout`));
 } else if (sourceFiles.length === 0) {
-  log(chalk.yellow(`No files matched your input`));
+  log(chalk => chalk.yellow(`No files matched your input`));
   process.exit(0);
 }
 
 if (options.stripEmbedComment && !options.stdout) {
-  errorLog(
+  errorLog(chalk =>
     chalk.red(
       `If you use the --strip-embed-comment flag, you must use the --stdout flag and redirect the result to your destination file, otherwise your source file(s) will be rewritten and comment source is lost.`,
     ),
@@ -57,13 +56,13 @@ if (options.stripEmbedComment && !options.stdout) {
 }
 
 if (options.verify) {
-  log(chalk.blue(`Verifying...`));
+  log(chalk => chalk.blue(`Verifying...`));
 } else if (options.dryRun) {
-  log(chalk.blue(`Doing a dry run...`));
+  log(chalk => chalk.blue(`Doing a dry run...`));
 } else if (options.stdout) {
-  log(chalk.blue(`Outputting to stdout...`));
+  log(chalk => chalk.blue(`Outputting to stdout...`));
 } else {
-  log(chalk.blue(`Embedding...`));
+  log(chalk => chalk.blue(`Embedding...`));
 }
 
 const ignoreFile = ['.embedmeignore', '.gitignore'].map(f => relative(process.cwd(), f)).find(existsSync);
@@ -73,25 +72,25 @@ if (ignoreFile) {
 
   const filtered = sourceFiles.filter(ignore.accepts);
 
-  log(chalk.blue(`Skipped ${sourceFiles.length - filtered.length} files ignored in '${ignoreFile}'`));
+  log(chalk => chalk.blue(`Skipped ${sourceFiles.length - filtered.length} files ignored in '${ignoreFile}'`));
 
   sourceFiles = filtered;
 
   if (sourceFiles.length === 0) {
-    log(chalk.yellow(`All matching files were ignored in '${ignoreFile}'`));
+    log(chalk => chalk.yellow(`All matching files were ignored in '${ignoreFile}'`));
     process.exit(0);
   }
 }
 
 sourceFiles.forEach((source, i) => {
   if (i > 0) {
-    log(chalk.gray(`---`));
+    log(chalk => chalk.gray(`---`));
   }
 
   const resolvedPath = resolve(source);
 
   if (!existsSync(source)) {
-    errorLog(chalk.red(`  File ${chalk.underline(relative(process.cwd(), resolvedPath))} does not exist.`));
+    errorLog(chalk => chalk.red(`  File ${chalk.underline(relative(process.cwd(), resolvedPath))} does not exist.`));
     process.exit(1);
     return;
   }
@@ -102,17 +101,21 @@ sourceFiles.forEach((source, i) => {
 
   if (options.verify) {
     if (sourceText !== outText) {
-      errorLog(chalk.red(`Diff detected, exiting 1`));
+      errorLog(chalk => chalk.red(`Diff detected, exiting 1`));
       process.exit(1);
     }
   } else if (options.stdout) {
     process.stdout.write(outText);
   } else if (!options.dryRun) {
     if (sourceText !== outText) {
-      log(chalk.magenta(`  Writing ${chalk.underline(relative(process.cwd(), resolvedPath))} with embedded changes.`));
+      log(chalk =>
+        chalk.magenta(`  Writing ${chalk.underline(relative(process.cwd(), resolvedPath))} with embedded changes.`),
+      );
       writeFileSync(source, outText);
     } else {
-      log(chalk.magenta(`  No changes to write for ${chalk.underline(relative(process.cwd(), resolvedPath))}`));
+      log(chalk =>
+        chalk.magenta(`  No changes to write for ${chalk.underline(relative(process.cwd(), resolvedPath))}`),
+      );
     }
   }
 });
