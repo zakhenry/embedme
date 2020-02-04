@@ -74,22 +74,6 @@ int main()
 
 ```
 
-Arduino
-
-```cpp
-// snippets/sample.ino
-
-#include <iostream>
-using namespace std;
-
-int main()
-{
-    cout << "Hello, World!";
-    return 0;
-}
-
-```
-
 C
 
 ```c
