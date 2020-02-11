@@ -83,7 +83,7 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L44-L77
+// src/embedme.lib.ts#L44-L78
 
 enum SupportedFileType {
   PLAIN_TEXT = 'txt',
@@ -118,6 +118,7 @@ enum SupportedFileType {
   PROTOBUF = 'proto',
   SQL = 'sql',
   HASKELL = 'hs',
+  ARDUINO = 'ino',
 }
 ```
 

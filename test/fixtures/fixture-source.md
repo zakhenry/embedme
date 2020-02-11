@@ -43,6 +43,12 @@ C++
 // snippets/sample.cpp
 ```
 
+Arduino
+
+```cpp
+// snippets/sample.ino
+```
+
 C
 
 ```c

@@ -74,6 +74,7 @@ enum SupportedFileType {
   PROTOBUF = 'proto',
   SQL = 'sql',
   HASKELL = 'hs',
+  ARDUINO = 'ino',
 }
 
 enum CommentFamily {
@@ -106,6 +107,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.SCALA,
     SupportedFileType.JSON_5,
     SupportedFileType.PROTOBUF,
+    SupportedFileType.ARDUINO,
   ],
   [CommentFamily.XML]: [SupportedFileType.HTML, SupportedFileType.MARKDOWN, SupportedFileType.XML],
   [CommentFamily.HASH]: [
