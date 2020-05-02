@@ -25,14 +25,14 @@ let hello: string => unit;
 ```
 
 ```ml
-// example.ml
+// exampleML.ml
 
 let hello (name : string) =
   "Hello " ^ (name ^ ("!, " ^ "how are you today?"))
 ```
 
 ```ml
-// example.mli
+// exampleML.mli
 
 val hello : string -> unit
 ```

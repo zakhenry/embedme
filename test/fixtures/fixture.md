@@ -21,7 +21,7 @@ let hello = () : string => "Hello, World!";
 OCaml
 
 ```ml
-// snippets/sample.ml
+// snippets/sampleML.ml
 
 let hello () = ("Hello, World!" : string)
 ```

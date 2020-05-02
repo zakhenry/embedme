@@ -15,7 +15,7 @@ Reason
 OCaml
 
 ```ml
-// snippets/sample.ml
+// snippets/sampleML.ml
 ```
 
 Typescript
