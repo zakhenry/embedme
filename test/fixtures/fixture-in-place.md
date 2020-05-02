@@ -9,6 +9,15 @@ This file is unformatted plain text
 
 ```
 
+Reason
+
+```re
+// snippets/sample.re
+
+let hello = () : string => "Hello, World!";
+
+```
+
 Typescript
 
 ```ts
