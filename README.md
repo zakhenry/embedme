@@ -89,6 +89,7 @@ enum SupportedFileType {
   PLAIN_TEXT = 'txt',
   TYPESCRIPT = 'ts',
   JAVASCRIPT = 'js',
+  REASON = 're',
   SCSS = 'scss',
   RUST = 'rust',
   JAVA = 'java',
@@ -119,7 +120,6 @@ enum SupportedFileType {
   SQL = 'sql',
   HASKELL = 'hs',
   ARDUINO = 'ino',
-}
 ```
 
 ### Alternate embedding syntax

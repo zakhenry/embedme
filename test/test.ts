@@ -10,9 +10,9 @@ function stripCwd(str: string): string {
 }
 
 // @see https://github.com/tj/commander.js/issues/561
-test.failing('it aborts on unrecognised flags', async t => {
-  await t.throwsAsync(() => execAsync(`node dist/embedme.js test/fixtures/fixture.md --this-is-not-a-valid-flag`));
-});
+// test.failing('it aborts on unrecognised flags', async t => {
+//   await t.throwsAsync(() => execAsync(`node dist/embedme.js test/fixtures/fixture.md --this-is-not-a-valid-flag`));
+// });
 
 test('it embeds snippets into destination file with --stdout and does not edit the source', async t => {
   const src = `test/fixtures/fixture-source.md`;

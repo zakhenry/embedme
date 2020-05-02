@@ -8,7 +8,6 @@
   "private": false,
   "bin": "./dist/embedme.js",
   "scripts": {
-    "embedme": "node dist/embedme.js",
     "build": "tsc",
     "write-help-output": "echo \"$ embedme --help\" > readme/help-output.txt && node dist/embedme.js --help >> readme/help-output.txt",
     "start": "node dist/embedme.js README.md",
