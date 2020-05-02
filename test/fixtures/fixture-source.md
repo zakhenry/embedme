@@ -12,6 +12,12 @@ Reason
 // snippets/sample.re
 ```
 
+OCaml
+
+```ml
+// snippets/sample.ml
+```
+
 Typescript
 
 ```ts

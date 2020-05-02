@@ -18,6 +18,14 @@ let hello = () : string => "Hello, World!";
 
 ```
 
+OCaml
+
+```ml
+// snippets/sample.ml
+
+let hello () = ("Hello, World!" : string)
+```
+
 Typescript
 
 ```ts
