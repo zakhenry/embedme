@@ -54,17 +54,17 @@ Usage: embedme [options] [...files]
 
 Options:
   -V, --version              output the version number
-  --verify                   Verify that running embedme would result in no 
+  --verify                   Verify that running embedme would result in no
                              changes. Useful for CI
   --dry-run                  Run embedme as usual, but don't write
-  --source-root [directory]  Directory your source files live in in order to 
+  --source-root [directory]  Directory your source files live in in order to
                              shorten the comment line in code fence
   --silent                   No console output
-  --stdout                   Output resulting file to stdout (don't rewrite 
+  --stdout                   Output resulting file to stdout (don't rewrite
                              original)
-  --strip-embed-comment      Remove the comments from the code fence. *Must* be 
+  --strip-embed-comment      Remove the comments from the code fence. *Must* be
                              run with --stdout flag
-  -h, --help                 output usage information
+  -h, --help                 display help for command
 
 ```
 
@@ -83,7 +83,7 @@ Here's a list of file types supported by this utility, if you have a need for an
 contribute, it is easy!
 
 ```ts
-// src/embedme.lib.ts#L44-L78
+// src/embedme.lib.ts#L44-L80
 
 enum SupportedFileType {
   PLAIN_TEXT = 'txt',
@@ -120,6 +120,7 @@ enum SupportedFileType {
   SQL = 'sql',
   HASKELL = 'hs',
   ARDUINO = 'ino',
+}
 ```
 
 ### Alternate embedding syntax

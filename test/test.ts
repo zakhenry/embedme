@@ -9,7 +9,6 @@ function stripCwd(str: string): string {
   return str.replace(new RegExp(process.cwd(), 'g'), '${cwd}');
 }
 
-
 test('it aborts on unrecognised flags', async t => {
   await t.throwsAsync(() => execAsync(`node dist/embedme.js test/fixtures/fixture.md --this-is-not-a-valid-flag`));
 });

@@ -6,8 +6,8 @@ Here is a _markdown_ document
 export function hello(name: string): string {
   return `Hello ${name}!, how are you today?`;
 }
-
 ```
+
 ```re
 // example.re
 
