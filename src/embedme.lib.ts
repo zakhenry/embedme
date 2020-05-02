@@ -45,6 +45,7 @@ enum SupportedFileType {
   PLAIN_TEXT = 'txt',
   TYPESCRIPT = 'ts',
   JAVASCRIPT = 'js',
+  REASON = 're',
   SCSS = 'scss',
   RUST = 'rust',
   JAVA = 'java',
@@ -93,6 +94,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.PLAIN_TEXT, // this is a lie, but we gotta pick something
     SupportedFileType.C,
     SupportedFileType.TYPESCRIPT,
+    SupportedFileType.REASON,
     SupportedFileType.JAVASCRIPT,
     SupportedFileType.RUST,
     SupportedFileType.CPP,

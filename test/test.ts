@@ -9,8 +9,7 @@ function stripCwd(str: string): string {
   return str.replace(new RegExp(process.cwd(), 'g'), '${cwd}');
 }
 
-// @see https://github.com/tj/commander.js/issues/561
-test.failing('it aborts on unrecognised flags', async t => {
+test('it aborts on unrecognised flags', async t => {
   await t.throwsAsync(() => execAsync(`node dist/embedme.js test/fixtures/fixture.md --this-is-not-a-valid-flag`));
 });
 

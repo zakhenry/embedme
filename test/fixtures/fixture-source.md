@@ -6,6 +6,12 @@ Plain Text
 // snippets/sample.txt
 ```
 
+Reason
+
+```re
+// snippets/sample.re
+```
+
 Typescript
 
 ```ts
