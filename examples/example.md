@@ -13,13 +13,26 @@ export function hello(name: string): string {
 
 let hello = (name: string) => {
   "Hello " ++ name ++ "!, " ++ "how are you today?";
-}
+};
 
 ```
 
 ```re
 // example.rei
 
-let hello: string => unit
+let hello: string => unit;
 
+```
+
+```ml
+// exampleML.ml
+
+let hello (name : string) =
+  "Hello " ^ (name ^ ("!, " ^ "how are you today?"))
+```
+
+```ml
+// exampleML.mli
+
+val hello : string -> unit
 ```
