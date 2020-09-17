@@ -201,6 +201,18 @@ Haskell
 -- snippets/sample.hs
 ```
 
+JSX
+
+```jsx
+// snippets/sample.jsx
+```
+
+TSX
+
+```tsx
+// snippets/sample.tsx
+```
+
 ## Extension-less selection
 
 ```sh

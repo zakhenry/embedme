@@ -120,6 +120,8 @@ enum SupportedFileType {
   SQL = 'sql',
   HASKELL = 'hs',
   ARDUINO = 'ino',
+  JSX = 'jsx',
+  TSX = 'tsx',
 }
 ```
 
