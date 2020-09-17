@@ -45,6 +45,7 @@ enum SupportedFileType {
   PLAIN_TEXT = 'txt',
   TYPESCRIPT = 'ts',
   JAVASCRIPT = 'js',
+  JSX = 'jsx',
   REASON = 're',
   SCSS = 'scss',
   RUST = 'rust',
