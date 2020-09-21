@@ -400,6 +400,26 @@ main = putStrLn "Hello, world!"
 
 ```
 
+JSX
+
+```jsx
+// snippets/sample.jsx
+
+console.log('Hello World');
+
+```
+
+TSX
+
+```tsx
+// snippets/sample.tsx
+
+export function hello(): string {
+  return 'Hello World';
+}
+
+```
+
 ## Extension-less selection
 
 ```sh
