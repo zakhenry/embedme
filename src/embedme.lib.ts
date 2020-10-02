@@ -295,7 +295,6 @@ async function getReplacement(
 
   if (filename.startsWith('http')) {
     file = await getTargetFileContentRemote(filename);
-    console.log(file);
   } else {
     if (!existsSync(relativePath)) {
       log({ returnSnippet: substr }, chalk =>

@@ -31,7 +31,7 @@ test('it embeds snippets into destination file with --stdout and does not edit t
 test('it edits the file in place, embedding code snippets', async t => {
   const src = `test/fixtures/fixture.md`;
   const filename = `test/fixtures/fixture-in-place.md`;
-  await copyFileSync(`test/fixtures/fixture-source.md`, filename);
+  copyFileSync(`test/fixtures/fixture-source.md`, filename);
   const before = readFileSync(filename, 'utf8');
 
   const { stdout, stderr } = await execAsync(`node dist/embedme.js ${filename}`);

@@ -103,6 +103,12 @@ PHP
 // snippets/sample.php
 ```
 
+Remote PHP File
+
+```php
+// https://raw.githubusercontent.com/astridx/embedme/master/test/fixtures/snippets/sample.php
+```
+
 C#
 
 ```cs
