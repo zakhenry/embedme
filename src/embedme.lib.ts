@@ -295,6 +295,12 @@ async function getReplacement(
 
   if (filename.startsWith('http')) {
     file = await getTargetFileContentRemote(filename);
+    if (file === 'this-file-does-not-exist') {
+      log({ returnSnippet: substr }, chalk =>
+        chalk.red(`Found filename ${chalk.underline(filename)} in comment in first line, but file does not exist!`),
+      );
+      return substr;
+    }
   } else {
     if (!existsSync(relativePath)) {
       log({ returnSnippet: substr }, chalk =>

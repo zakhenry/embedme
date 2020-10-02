@@ -14,9 +14,8 @@ export async function getTargetFileContentRemote(filename: string) {
             .then(function(response: { data: string }) {
               responseString = response.data;
             })
-            .catch(function(error: { data: string }) {
-              console.log(error.data);
-              responseString = '';
+            .catch(function() {
+              responseString = 'this-file-does-not-exist';
             }),
         ),
       2000,
