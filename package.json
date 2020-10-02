@@ -42,6 +42,7 @@
     }
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "chalk": "3.0.0",
     "commander": "5.1.0",
     "gitignore-parser": "~0.0.2",

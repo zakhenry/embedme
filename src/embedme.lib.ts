@@ -1,6 +1,7 @@
 import chalk, { Chalk } from 'chalk';
 import { existsSync, readFileSync } from 'fs';
 import { relative, resolve } from 'path';
+import { getTargetFileContentRemote } from './getTargetFileContentRemote';
 
 /**
  * This simple script looks for code fences in source file for a syntax that looks like a file reference, optionally
@@ -181,7 +182,7 @@ export const logBuilder = (options: EmbedmeOptions, errorLog = false) => (logCon
 };
 
 /* @internal */
-function getReplacement(
+async function getReplacement(
   inputFilePath: string,
   options: EmbedmeOptions,
   logMethod: ReturnType<typeof logBuilder>,
@@ -193,7 +194,7 @@ function getReplacement(
   startLineNumber: number,
   ignoreNext: boolean,
   commentEmbedOverrideFilepath?: string,
-): string {
+) {
   /**
    * Re-declare the log class, prefixing each snippet with the file and line number
    * Note that we couldn't have derived the line count in the parent regex matcher, as we don't yet know how long the
@@ -290,18 +291,25 @@ function getReplacement(
     ? resolve(process.cwd(), options.sourceRoot, filename)
     : resolve(inputFilePath, '..', filename);
 
-  if (!existsSync(relativePath)) {
-    log({ returnSnippet: substr }, chalk =>
-      chalk.red(
-        `Found filename ${chalk.underline(
-          filename,
-        )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
-      ),
-    );
-    return substr;
-  }
+  let file = '';
 
-  const file = readFileSync(relativePath, 'utf8');
+  if (filename.startsWith('http')) {
+    file = await getTargetFileContentRemote(filename);
+    console.log(file);
+  } else {
+    if (!existsSync(relativePath)) {
+      log({ returnSnippet: substr }, chalk =>
+        chalk.red(
+          `Found filename ${chalk.underline(
+            filename,
+          )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
+        ),
+      );
+      return substr;
+    }
+
+    file = readFileSync(relativePath, 'utf8');
+  }
 
   let lines = file.split(lineEnding);
   if (lineNumbering) {
@@ -386,7 +394,7 @@ function detectLineEnding(sourceText: string): string {
   return rexp.test(sourceText) ? '\r\n' : '\n';
 }
 
-export function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): string {
+export async function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): Promise<string> {
   const log = logBuilder(options);
 
   log(chalk => chalk.magenta(`  Analysing ${chalk.underline(relative(process.cwd(), inputFilePath))}...`));
@@ -432,7 +440,8 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
 
     const commentInsertion = start.match(/<!--\s*?embedme[ ]+?(\S+?)\s*?-->/);
 
-    const replacement = getReplacement(
+    const replacement: string = await getReplacement(
+      //const replacement = await getReplacement(
       inputFilePath,
       options,
       log,
