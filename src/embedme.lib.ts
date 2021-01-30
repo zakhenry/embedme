@@ -2,6 +2,8 @@ import chalk, { Chalk } from 'chalk';
 import { existsSync, readFileSync } from 'fs';
 import { relative, resolve } from 'path';
 
+import axios from 'axios';
+
 /**
  * This simple script looks for code fences in source file for a syntax that looks like a file reference, optionally
  * with a line number reference. If a file exists at this location it is inserted into the code fence.
@@ -180,8 +182,53 @@ export const logBuilder = (options: EmbedmeOptions, errorLog = false) => (logCon
   }
 };
 
+function getFileFromPath(
+  filename: string,
+  substr: string,
+  inputFilePath: string,
+  log: (arg0: {returnSnippet: string}, arg2: LogConstructor)=> void,
+  options: EmbedmeOptions): string | null {
+
+  const relativePath = options.sourceRoot
+    ? resolve(process.cwd(), options.sourceRoot, filename)
+    : resolve(inputFilePath, '..', filename);
+
+  if (!existsSync(relativePath)) {
+    log({ returnSnippet: substr }, chalk =>
+      chalk.red(
+        `Found filename ${chalk.underline(
+          filename,
+        )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
+      ),
+    );
+    return null;
+  }
+
+  return readFileSync(relativePath, 'utf8');
+}
+
+async function getFileFromURL(
+  commentedFilename: string,
+  substr: string,
+  log: (arg0: {returnSnippet: string}, arg2: LogConstructor)=> void,
+): Promise<string | null> {
+  try {
+    const responseData = (await axios.get<string>(commentedFilename)).data;
+    return responseData
+  } catch (err) {
+    log({ returnSnippet: substr }, chalk =>
+      chalk.red(
+        `Found URL ${chalk.underline(
+          commentedFilename,
+        )} in comment in first line, but URL does not exist!`,
+      ),
+    );
+    return null
+  }
+}
+
 /* @internal */
-function getReplacement(
+async function getReplacement(
   inputFilePath: string,
   options: EmbedmeOptions,
   logMethod: ReturnType<typeof logBuilder>,
@@ -193,7 +240,7 @@ function getReplacement(
   startLineNumber: number,
   ignoreNext: boolean,
   commentEmbedOverrideFilepath?: string,
-): string {
+): Promise<string> {
   /**
    * Re-declare the log class, prefixing each snippet with the file and line number
    * Note that we couldn't have derived the line count in the parent regex matcher, as we don't yet know how long the
@@ -269,6 +316,8 @@ function getReplacement(
 
   const matches = commentedFilename.match(/\s?(\S+?)((#L(\d+)-L(\d+))|$)/m);
 
+  const isValidUrl = isValidHttpUrl(commentedFilename);
+
   if (!matches) {
     log({ returnSnippet: substr }, chalk => chalk.gray(`No file found in embed line`));
     return substr;
@@ -286,22 +335,16 @@ function getReplacement(
     return substr;
   }
 
-  const relativePath = options.sourceRoot
-    ? resolve(process.cwd(), options.sourceRoot, filename)
-    : resolve(inputFilePath, '..', filename);
-
-  if (!existsSync(relativePath)) {
-    log({ returnSnippet: substr }, chalk =>
-      chalk.red(
-        `Found filename ${chalk.underline(
-          filename,
-        )} in comment in first line, but file does not exist at ${chalk.underline(relativePath)}!`,
-      ),
-    );
-    return substr;
+  let file: string | null;
+  if (!isValidUrl) {
+    file = getFileFromPath(filename, substr, inputFilePath, log, options)
+  } else {
+    file = await getFileFromURL(commentedFilename, substr, log)
   }
 
-  const file = readFileSync(relativePath, 'utf8');
+  if(!file) {
+    return substr;
+  }
 
   let lines = file.split(lineEnding);
   if (lineNumbering) {
@@ -386,7 +429,19 @@ function detectLineEnding(sourceText: string): string {
   return rexp.test(sourceText) ? '\r\n' : '\n';
 }
 
-export function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): string {
+function isValidHttpUrl(str: string) {
+  let url;
+
+  try {
+    url = new URL(str);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
+export async function embedme(sourceText: string, inputFilePath: string, options: EmbedmeOptions): Promise<string> {
   const log = logBuilder(options);
 
   log(chalk => chalk.magenta(`  Analysing ${chalk.underline(relative(process.cwd(), inputFilePath))}...`));
@@ -432,7 +487,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
 
     const commentInsertion = start.match(/<!--\s*?embedme[ ]+?(\S+?)\s*?-->/);
 
-    const replacement = getReplacement(
+    const replacement: string = await getReplacement(
       inputFilePath,
       options,
       log,

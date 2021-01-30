@@ -82,7 +82,7 @@ if (ignoreFile) {
   }
 }
 
-sourceFiles.forEach((source, i) => {
+sourceFiles.forEach(async (source, i) => {
   if (i > 0) {
     log(chalk => chalk.gray(`---`));
   }
@@ -97,7 +97,7 @@ sourceFiles.forEach((source, i) => {
 
   const sourceText = readFileSync(source, 'utf-8');
 
-  const outText = embedme(sourceText, resolvedPath, options);
+  const outText = await embedme(sourceText, resolvedPath, options);
 
   if (options.verify) {
     if (sourceText !== outText) {
