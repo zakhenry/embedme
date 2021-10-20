@@ -188,6 +188,7 @@ function getReplacement(
   substr: string,
   leadingSpaces: string,
   lineEnding: string,
+  infoString: string,
   codeExtension: SupportedFileType,
   firstLine: string,
   startLineNumber: number,
@@ -343,8 +344,8 @@ function getReplacement(
 
   let replacement =
     !!commentEmbedOverrideFilepath || options.stripEmbedComment
-      ? `\`\`\`${codeExtension}${lineEnding}${outputCode}${lineEnding}\`\`\``
-      : `\`\`\`${codeExtension}${lineEnding}${firstLine.trim()}${lineEnding}${lineEnding}${outputCode}${lineEnding}\`\`\``;
+      ? `\`\`\`${infoString}${lineEnding}${outputCode}${lineEnding}\`\`\``
+      : `\`\`\`${infoString}${lineEnding}${firstLine.trim()}${lineEnding}${lineEnding}${outputCode}${lineEnding}\`\`\``;
 
   if (leadingSpaces.length) {
     replacement = replacement
@@ -410,9 +411,10 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
     const [codeFence, leadingSpaces] = result;
     const start = sourceText.substring(previousEnd, result.index);
 
-    const extensionMatch = codeFence.match(/```(.*)/);
+    const infoStringMatch = codeFence.match(/```(.*)/);
 
-    const codeExtension = extensionMatch ? extensionMatch[1] : null;
+    const infoString = infoStringMatch ? infoStringMatch[1] : '';
+    const codeExtension = infoString !== '' ? infoString.trim().split(/\s/)[0] : null;
     const splitFence = codeFence.split(lineEnding);
     const firstLine = splitFence.length >= 3 ? splitFence[1] : null;
 
@@ -439,6 +441,7 @@ export function embedme(sourceText: string, inputFilePath: string, options: Embe
       codeFence,
       leadingSpaces,
       lineEnding,
+      infoString,
       codeExtension as SupportedFileType,
       firstLine || '',
       startLineNumber,
