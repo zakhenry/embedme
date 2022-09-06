@@ -72,3 +72,11 @@ test('it strips embedded comments', async t => {
   t.assert(stderr.includes('without comment line'));
   t.assert(!stdout.includes('// snippets/sample.md'));
 });
+
+test('it exits with code 1 when a file does not exist with --verify', async t => {
+  const error: Error & { code: number } = await t.throwsAsync(
+    execAsync(`node dist/embedme.js test/fixtures/fixture-missing.md --verify`),
+  );
+
+  t.assert(error.code === 1);
+});
