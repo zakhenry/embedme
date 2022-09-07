@@ -287,34 +287,6 @@ Ignored block
 // Not a file
 ```
 
-### Also bad file format
-
-```ts
-// also-not-a-file
-```
-
-### Missing file
-
-```txt
-// this-file-does-not-exist.txt
-```
-
-### Contains Codefence
-
-```md
-<!-- contains-codefence.md -->
-```
-
-### Contains Codefence, but not the embedded lines
-
-```md
-<!-- contains-codefence.md#L1-L3 -->
-
-# This markdown document
-
-## Contains a codefence
-```
-
 ### malformed line numbering
 
 ```ts

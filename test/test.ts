@@ -75,7 +75,7 @@ test('it strips embedded comments', async t => {
 
 test('it exits with code 1 when a file does not exist with --verify', async t => {
   const error: Error & { code: number } = await t.throwsAsync(
-    execAsync(`node dist/embedme.js test/fixtures/fixture-missing.md --verify`),
+    execAsync(`node dist/embedme.js test/fixtures/fixture-error.md --verify`),
   );
 
   t.assert(error.code === 1);

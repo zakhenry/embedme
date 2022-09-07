@@ -99,13 +99,11 @@ sourceFiles.forEach((source, i) => {
 
   const { outText, error } = embedme(sourceText, resolvedPath, options);
 
-  if (options.verify) {
+  if (error) {
+    process.exit(1);
+  } else if (options.verify) {
     if (sourceText !== outText) {
       errorLog(chalk => chalk.red(`Diff detected, exiting 1`));
-      process.exit(1);
-    }
-
-    if (error) {
       process.exit(1);
     }
   } else if (options.stdout) {
