@@ -73,10 +73,11 @@ test('it strips embedded comments', async t => {
   t.assert(!stdout.includes('// snippets/sample.md'));
 });
 
-test('it exits with code 1 when a file does not exist with --verify', async t => {
-  const error: Error & { code: number } = await t.throwsAsync(
+test('it exits with code 1 in error conditions', async t => {
+  const error: Error & { code: number; stdout: string } = await t.throwsAsync(
     execAsync(`node dist/embedme.js test/fixtures/fixture-error.md --verify`),
   );
 
+  t.snapshot(stripCwd(error.stdout), 'stdout does not match');
   t.assert(error.code === 1);
 });
