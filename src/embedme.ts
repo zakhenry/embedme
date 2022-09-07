@@ -97,9 +97,11 @@ sourceFiles.forEach((source, i) => {
 
   const sourceText = readFileSync(source, 'utf-8');
 
-  const outText = embedme(sourceText, resolvedPath, options);
+  const { outText, error } = embedme(sourceText, resolvedPath, options);
 
-  if (options.verify) {
+  if (error) {
+    process.exit(1);
+  } else if (options.verify) {
     if (sourceText !== outText) {
       errorLog(chalk => chalk.red(`Diff detected, exiting 1`));
       process.exit(1);
