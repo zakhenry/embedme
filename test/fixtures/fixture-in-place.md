@@ -165,6 +165,15 @@ print Hello World
 
 ```
 
+PowerShell
+
+```ps1
+# snippets/sample.ps1
+
+echo Hello World
+
+```
+
 Objective C
 
 ```objectivec
