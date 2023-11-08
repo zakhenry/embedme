@@ -85,6 +85,12 @@ Shell
 # snippets/sample.sh
 ```
 
+PowerShell
+
+```ps1
+# snippets/sample.ps1
+```
+
 Objective C
 
 ```objectivec

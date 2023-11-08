@@ -165,6 +165,15 @@ print Hello World
 
 ```
 
+PowerShell
+
+```ps1
+# snippets/sample.ps1
+
+echo Hello World
+
+```
+
 Objective C
 
 ```objectivec
@@ -435,14 +444,14 @@ print Hello World
 ```cs
 // snippets/sample.cs#L6-L13
 
-static void Main()
-{
-    Console.WriteLine("Hello World!");
+       static void Main()
+       {
+           Console.WriteLine("Hello World!");
 
-    // Keep the console window open in debug mode.
-    Console.WriteLine("Press any key to exit.");
-    Console.ReadKey();
-}
+           // Keep the console window open in debug mode.
+           Console.WriteLine("Press any key to exit.");
+           Console.ReadKey();
+       }
 ```
 
 ## Indented selection
