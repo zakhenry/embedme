@@ -104,6 +104,7 @@ enum SupportedFileType {
   PYTHON = 'py',
   BASH = 'bash',
   SHELL = 'sh',
+  POWERSHELL = 'ps1',
   GOLANG = 'go',
   OBJECTIVE_C = 'objectivec',
   PHP = 'php',
