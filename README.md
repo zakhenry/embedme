@@ -85,45 +85,45 @@ contribute, it is easy!
 ```ts
 // src/embedme.lib.ts#L44-L82
 
-enum SupportedFileType {
-  PLAIN_TEXT = 'txt',
-  TYPESCRIPT = 'ts',
-  JAVASCRIPT = 'js',
-  REASON = 're',
-  SCSS = 'scss',
-  RUST = 'rust',
-  JAVA = 'java',
-  CPP = 'cpp',
-  C = 'c',
-  HTML = 'html',
-  XML = 'xml',
-  MARKDOWN = 'md',
-  YAML = 'yaml',
-  JSON = 'json',
-  JSON_5 = 'json5',
-  PYTHON = 'py',
-  BASH = 'bash',
-  SHELL = 'sh',
-  POWERSHELL = 'ps1',
-  GOLANG = 'go',
-  OBJECTIVE_C = 'objectivec',
-  PHP = 'php',
-  C_SHARP = 'cs',
-  SWIFT = 'swift',
-  RUBY = 'rb',
-  KOTLIN = 'kotlin',
-  SCALA = 'scala',
-  CRYSTAL = 'cr',
-  PLANT_UML = 'puml',
-  MERMAID = 'mermaid',
-  CMAKE = 'cmake',
-  PROTOBUF = 'proto',
-  SQL = 'sql',
-  HASKELL = 'hs',
-  ARDUINO = 'ino',
-  JSX = 'jsx',
-  TSX = 'tsx',
+
+  const match = line.match(regex);
+  if (!match) {
+    return null;
+  }
+  console.log('>> leadingSymbol END', match);
+  return match[1];
+};
+
+const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> = {
+  [CommentFamily.NONE]: _ => null,
+  [CommentFamily.C]: leadingSymbol('//'),
+  [CommentFamily.XML]: line => {
+    const match = line.match(/<!--\s*?(\S*?)\s*?-->/);
+    if (!match) {
+      return null;
+    }
+
+    return match[1];
+  },
+  [CommentFamily.HASH]: leadingSymbol('#'),
+  [CommentFamily.SINGLE_QUOTE]: leadingSymbol(`'`),
+  [CommentFamily.DOUBLE_PERCENT]: leadingSymbol('%%'),
+  [CommentFamily.DOUBLE_HYPHENS]: leadingSymbol('--'),
+};
+
+function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily | null {
+  console.log('>> lookupLanguageCommentFamily START');
+  return Object.values(CommentFamily)
+  .filter(x => typeof x === 'number')
+  .find((commentFamily: CommentFamily) => languageMap[commentFamily].includes(fileType));
 }
+
+// this somewhat convoluted type to generate logs is due to the requirement to be able to log colours to both stdout,
+// and stderr, so the appropriate chalk instance has to be injected.
+type LogConstructor = (chalk: Chalk) => string;
+
+export const logBuilder = (options: EmbedmeOptions, errorLog = false) => (logConstructor: LogConstructor) => {
+  // console.log('>> logBuilder START');
 ```
 
 ### Alternate embedding syntax
