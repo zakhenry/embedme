@@ -79,6 +79,7 @@ enum SupportedFileType {
   ARDUINO = 'ino',
   JSX = 'jsx',
   TSX = 'tsx',
+  CSS = 'css',
 }
 
 enum CommentFamily {
@@ -89,6 +90,7 @@ enum CommentFamily {
   SINGLE_QUOTE,
   DOUBLE_PERCENT,
   DOUBLE_HYPHENS,
+  SLASH_ASTERISK,
 }
 
 type Replacement = {
@@ -135,6 +137,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
   [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
   [CommentFamily.DOUBLE_PERCENT]: [SupportedFileType.MERMAID],
   [CommentFamily.DOUBLE_HYPHENS]: [SupportedFileType.SQL, SupportedFileType.HASKELL],
+  [CommentFamily.SLASH_ASTERISK]: [SupportedFileType.CSS]
 };
 
 const leadingSymbol = (symbol: string): FilenameFromCommentReader => line => {
@@ -163,6 +166,14 @@ const filetypeCommentReaders: Record<CommentFamily, FilenameFromCommentReader> =
   [CommentFamily.SINGLE_QUOTE]: leadingSymbol(`'`),
   [CommentFamily.DOUBLE_PERCENT]: leadingSymbol('%%'),
   [CommentFamily.DOUBLE_HYPHENS]: leadingSymbol('--'),
+  [CommentFamily.SLASH_ASTERISK]: line => {
+    const match = line.match(/\/\*\s*?(\S*?)\s*?\*\//);
+    if (!match) {
+      return null;
+    }
+
+    return match[1];
+  },
 };
 
 function lookupLanguageCommentFamily(fileType: SupportedFileType): CommentFamily | null {
