@@ -429,6 +429,14 @@ export function hello(): string {
 
 ```
 
+CSS
+
+```css
+.hello {
+  
+}
+```
+
 ## Extension-less selection
 
 ```sh
