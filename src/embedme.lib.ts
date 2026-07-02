@@ -80,6 +80,7 @@ enum SupportedFileType {
   JSX = 'jsx',
   TSX = 'tsx',
   CSS = 'css',
+  NIX = 'nix',
 }
 
 enum CommentFamily {
@@ -133,6 +134,7 @@ const languageMap: Record<CommentFamily, SupportedFileType[]> = {
     SupportedFileType.RUBY,
     SupportedFileType.CRYSTAL,
     SupportedFileType.CMAKE,
+    SupportedFileType.NIX,
   ],
   [CommentFamily.SINGLE_QUOTE]: [SupportedFileType.PLANT_UML],
   [CommentFamily.DOUBLE_PERCENT]: [SupportedFileType.MERMAID],

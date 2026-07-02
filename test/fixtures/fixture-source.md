@@ -219,6 +219,18 @@ TSX
 // snippets/sample.tsx
 ```
 
+CSS
+
+```css
+/* snippets/sample.css */
+```
+
+NIX
+
+```nix
+# snippets/sample.nix
+```
+
 ## Extension-less selection
 
 ```sh
